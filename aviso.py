@@ -104,11 +104,11 @@ class Aviso:
                     earned_money = float(price_span.get_attribute('innerHTML').split('<')[0])
                     time_sleep = int(time_span.get_attribute('innerHTML').split()[0])
                     a.click()
-                    time.sleep(0.5)
+                    time.sleep(1.5)
                     i.find_elements(By.CLASS_NAME, 'go-link-youtube')[0].click()
                 except Exception as e:
                     print(f"{bcolors.WARNING}{datetime.datetime.now()} {e}{bcolors.ENDC}")
-                    time.sleep(5)
+                    time.sleep(10)
                     continue
 
                 for j in range(5):
@@ -126,16 +126,16 @@ class Aviso:
                 try:
                     iframe = driver.find_element(By.ID, 'video-start')
                     driver.switch_to.frame(iframe)
-                    time.sleep(3)
+                    time.sleep(5)
                     driver.find_element(By.ID, 'movie_player').click()
-                    time.sleep(time_sleep + 10)
+                    time.sleep(time_sleep + 12.5)
                     driver.switch_to.window(driver.window_handles[-1])
                     if not ('youtube.com' in driver.current_url):
                         iframe = driver.find_element(By.ID, 'video-start')
                         driver.switch_to.frame(iframe)
-                        time.sleep(3)
+                        time.sleep(5)
                         driver.find_element(By.ID, 'movie_player').click()
-                        time.sleep(7)
+                        time.sleep(9)
                         driver.switch_to.window(driver.window_handles[-1])
 
                     self.total_earned_money += earned_money
@@ -147,7 +147,7 @@ class Aviso:
                         )
                 except Exception as e:
                     print(f"{bcolors.WARNING}{datetime.datetime.now()}{e}{bcolors.ENDC}")
-                    time.sleep(5)
+                    time.sleep(10)
 
                 for handle in driver.window_handles[1:]:
                     driver.switch_to.window(handle)
