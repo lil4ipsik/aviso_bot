@@ -3,6 +3,8 @@ import random
 import pickle
 import time
 
+from selenium.common.exceptions import TimeoutException, WebDriverException
+
 from settings import Settings
 from aviso import Aviso
 from res.string import strings
@@ -35,6 +37,10 @@ def main():
                 quit()
             else:
                 continue
+        except (TimeoutException, WebDriverException):
+            print(f"{datetime.datetime.now()} Error with network. Sleep 1 minute")
+            time.sleep(60)
+            continue
 
 
 if __name__ == "__main__":
