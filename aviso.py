@@ -1,4 +1,8 @@
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.support import expected_conditions as ec
+from selenium.common.exceptions import TimeoutException
 
 from os.path import exists
 import datetime
@@ -28,27 +32,29 @@ class Aviso:
         print(f"{datetime.datetime.now()} " +
               f"{strings['view_web'][self.lan]}"
               )
-        driver.get("https://wmrfast.com/serfingnew.php")
-        print(f'{datetime.datetime.now()} sleep {5} seconds')
-        time.sleep(5)
+        driver.get("https://aviso.bz/work-serf")
         if _is_captcha_available(driver):
             input(f'\n\n\n{bcolors.WARNING}WARNING, COMPLETE THE CAPTCHA AND PRESS ENTER{bcolors.ENDC}\n\n\n')
 
-        website_list = driver.find_elements(By.CLASS_NAME, "no_active_link")
+        error_count = 0
+        website_list = driver.find_elements(By.CLASS_NAME, "work-serf")
         is_tasks_available = True
         if len(website_list) > 0:
             for i in website_list:
+                if error_count >= 10:
+                    break
                 try:
-                    a = i.find_element(By.CLASS_NAME, "serf_hash")
-                    price_span, time_span = i.find_elements(By.CLASS_NAME, "clickprice")
-                    earned_money = float(price_span.get_attribute('innerHTML'))
+                    a = i.find_element(By.TAG_NAME, "a")
+                    price_span = i.find_element(By.XPATH, 'tbody/tr/td[3]/span[2]')
+                    time_span = i.find_element(By.XPATH, "tbody/tr/td[3]/div/span[1]")
+                    earned_money = float(price_span.get_attribute('innerHTML').split('<')[0])
                     time_sleep = int(time_span.get_attribute('innerHTML').split()[0]) + 5
-                    if 't.me' in a.get_attribute('href'):
-                        continue
-                    else:
-                        a.click()
-                except Exception as e:
-                    print(f"{bcolors.WARNING}{e}{bcolors.ENDC}")
+                    a.click()
+                    time.sleep(1.5)
+                    i.find_element(By.CLASS_NAME, 'start-yes-serf').click()
+                except NoSuchElementException:
+                    error_count += 1
+                    time.sleep(3)
                     continue
 
                 for j in range(5):
@@ -61,21 +67,29 @@ class Aviso:
                 if len(driver.window_handles) < 2:
                     continue
 
-                driver.switch_to.window(driver.window_handles[1])
-                time.sleep(time_sleep)
-                self.total_earned_money += earned_money
-                print(
-                    f"{bcolors.OKGREEN}{datetime.datetime.now()} " +
-                    f"{strings['earned'][self.lan]}: " +
-                    f"{round(earned_money, 5)}, {strings['total'][self.lan]}: " +
-                    f"{round(self.total_earned_money, 5)}{bcolors.ENDC}"
-                )
+                try:
+                    driver.switch_to.window(driver.window_handles[1])
+                    time.sleep(time_sleep)
+                    driver.switch_to.frame('frminfo')
+                    driver.find_element(By.TAG_NAME, 'a').click()
+                except NoSuchElementException:
+                    error_count += 1
+                    time.sleep(3)
+                else:
+                    time.sleep(0.5)
+                    self.total_earned_money += earned_money
+                    print(
+                        f"{bcolors.OKGREEN}{datetime.datetime.now()} " +
+                        f"{strings['earned'][self.lan]}: " +
+                        f"{round(earned_money, 5)}, {strings['total'][self.lan]}: " +
+                        f"{round(self.total_earned_money, 5)}{bcolors.ENDC}"
+                    )
                 for handle in driver.window_handles[1:]:
                     driver.switch_to.window(handle)
                     driver.close()
 
                 driver.switch_to.window(driver.window_handles[0])
-                time.sleep(5)
+                time.sleep(1)
         else:
             is_tasks_available = False
 
@@ -91,24 +105,29 @@ class Aviso:
         driver.get("https://aviso.bz/work-youtube")
         if _is_captcha_available(driver):
             input(f'\n\n\n{bcolors.WARNING}WARNING, COMPLETE THE CAPTCHA AND PRESS ENTER{bcolors.ENDC}\n\n\n')
-        print(f'{datetime.datetime.now()} sleep {5} seconds')
-        time.sleep(5)
-        video_list = driver.find_elements(By.CLASS_NAME, "work-serf")
-        is_tasks_available = True
+        wait = WebDriverWait(driver, 7)
+        error_count = 0
+        video_list = []
+        for task in driver.find_elements(By.CLASS_NAME, "work-serf"):
+            if 'Просмотр видеоролика' in task.text:
+                video_list.append(task)
+        is_tasks_available = True if video_list else False
         if len(video_list) > 0:
             for i in video_list:
+                if error_count >= 10:
+                    break
                 try:
-                    a = i.find_elements(By.TAG_NAME, "span")[0]
-                    price_span = i.find_elements(By.TAG_NAME, "span")[4]
-                    time_span = i.find_elements(By.TAG_NAME, "span")[6]
+                    a = i.find_element(By.TAG_NAME, "span")
+                    price_span = i.find_element(By.XPATH, "tbody/tr/td[3]/span[2]")
+                    time_span = i.find_element(By.XPATH, "tbody/tr/td[3]/div/span[1]")
                     earned_money = float(price_span.get_attribute('innerHTML').split('<')[0])
-                    time_sleep = int(time_span.get_attribute('innerHTML').split()[0])
+                    time_sleep = int(time_span.get_attribute('innerHTML').split()[0]) + 3
                     a.click()
                     time.sleep(1.5)
-                    i.find_elements(By.CLASS_NAME, 'go-link-youtube')[0].click()
-                except Exception as e:
-                    print(f"{bcolors.WARNING}{datetime.datetime.now()} {e}{bcolors.ENDC}")
-                    time.sleep(10)
+                    i.find_element(By.CLASS_NAME, 'go-link-youtube').click()
+                except NoSuchElementException:
+                    error_count += 1
+                    time.sleep(3)
                     continue
 
                 for j in range(5):
@@ -121,40 +140,37 @@ class Aviso:
                 if len(driver.window_handles) < 2:
                     continue
 
-                driver.switch_to.window(driver.window_handles[-1])
-                time.sleep(3)
+                driver.switch_to.window(driver.window_handles[1])
                 try:
-                    iframe = driver.find_element(By.ID, 'video-start')
-                    driver.switch_to.frame(iframe)
-                    time.sleep(5)
-                    driver.find_element(By.ID, 'movie_player').click()
-                    time.sleep(time_sleep + 12.5)
-                    driver.switch_to.window(driver.window_handles[-1])
-                    if not ('youtube.com' in driver.current_url):
-                        iframe = driver.find_element(By.ID, 'video-start')
-                        driver.switch_to.frame(iframe)
+                    driver.switch_to.frame(wait.until(ec.presence_of_element_located((By.ID, 'video-start'))))
+                    wait.until(ec.presence_of_element_located((By.ID, 'movie_player'))).click()
+                    time.sleep(time_sleep)
+                    driver.switch_to.window(driver.window_handles[0])
+                    if not ('С учетом рефбека на ваш счет начислено' in i.text):
+                        driver.switch_to.window(driver.window_handles[1])
+                        wait.until(ec.url_changes(driver.current_url))
+                        driver.switch_to.frame(wait.until(ec.presence_of_element_located((By.ID, 'video-start'))))
+                        wait.until(ec.presence_of_element_located((By.ID, 'movie_player'))).click()
                         time.sleep(5)
-                        driver.find_element(By.ID, 'movie_player').click()
-                        time.sleep(9)
-                        driver.switch_to.window(driver.window_handles[-1])
-
+                        driver.switch_to.window(driver.window_handles[1])
+                except TimeoutException:
+                    error_count += 1
+                    time.sleep(3)
+                else:
                     self.total_earned_money += earned_money
                     print(
                         f"{bcolors.OKGREEN}{datetime.datetime.now()} " +
                         f"{strings['earned'][self.lan]}: " +
                         f"{round(earned_money, 5)}, {strings['total'][self.lan]}: " +
                         f"{round(self.total_earned_money, 5)}{bcolors.ENDC}"
-                        )
-                except Exception as e:
-                    print(f"{bcolors.WARNING}{datetime.datetime.now()}{e}{bcolors.ENDC}")
-                    time.sleep(10)
+                    )
 
                 for handle in driver.window_handles[1:]:
                     driver.switch_to.window(handle)
                     driver.close()
 
                 driver.switch_to.window(driver.window_handles[0])
-                time.sleep(3)
+                time.sleep(1)
         else:
             is_tasks_available = False
 
