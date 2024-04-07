@@ -1,6 +1,4 @@
 # aviso_bot
-Attention, if you are a citizen of the Russian Federation, reside in the territory of this failed state or support armed aggression on its part, fuck you, you are not welcome here and will not be supported. Glory to Ukraine, long live free Belarus
-
 This is a test bot for automatic earnings on aviso.bz Here is a short instruction to manually run the bot:
 
 1. Download the latest python3 interpreter and firefox
@@ -17,8 +15,6 @@ PS. Translated with DeepL.com (free version)
 
 _________________________________________________________________________________________________________________________________________________
 А тепер текст солов'їною )
-
-Увага, якщо Ви громадянин російської федерації, проживаєте на території цієї недодержави або підтримуєте збройні агресії з її боку - ідіть нахуй, вам тут не раді і Вам підтримка надаватися не буде. Слава Україні, живи вільна Білорусь
 
 Це тестовий бот для автоматичного заробітку на aviso.bz Ось коротка інструкція для ручного запуску бота:
 
