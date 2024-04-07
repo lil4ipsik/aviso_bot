@@ -124,7 +124,6 @@ class Aviso:
                     time_sleep = int(time_span.get_attribute('innerHTML').split()[0]) + 3
                     a.click()
                     time.sleep(1.5)
-                    i.find_element(By.CLASS_NAME, 'go-link-youtube').click()
                 except NoSuchElementException:
                     error_count += 1
                     time.sleep(3)
@@ -147,6 +146,7 @@ class Aviso:
                     time.sleep(time_sleep)
                     driver.switch_to.window(driver.window_handles[0])
                     if not ('С учетом рефбека на ваш счет начислено' in i.text):
+                        print("if not ('С учетом рефбека на ваш счет начислено' in i.text)")
                         driver.switch_to.window(driver.window_handles[1])
                         wait.until(ec.url_changes(driver.current_url))
                         driver.switch_to.frame(wait.until(ec.presence_of_element_located((By.ID, 'video-start'))))
@@ -154,6 +154,7 @@ class Aviso:
                         time.sleep(5)
                         driver.switch_to.window(driver.window_handles[1])
                 except TimeoutException:
+                    print('time out')
                     error_count += 1
                     time.sleep(3)
                 else:
