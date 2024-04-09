@@ -4,11 +4,14 @@ import time
 
 from selenium.common.exceptions import TimeoutException, NoSuchWindowException
 
+from bcolors import bcolors
 from res.string import strings
 from settings import Settings
 from aviso import Aviso
+from colorama import just_fix_windows_console
 
 
+just_fix_windows_console()
 _settings = Settings()
 settings = _settings.get_settings()
 lan = settings['language']
@@ -27,8 +30,8 @@ def start_config(_exit_event):
     while True:
         try:
             if is_website_tasks_available or is_video_tasks_available:
-                is_video_tasks_available = aviso.watch_videos(driver)['is_tasks_available']
-                is_website_tasks_available = aviso.view_websites(driver)['is_tasks_available']
+                is_video_tasks_available = aviso.watch_videos(driver)
+                is_website_tasks_available = aviso.view_websites(driver)
             else:
                 print(f'{datetime.datetime.now()} {strings["tasks_is_not_available"][lan]}')
                 exit_event.set()
@@ -46,7 +49,7 @@ def main():
     thread.start()
     try:
         while True:
-            command = input(f'\n{strings["command_list"][lan]}\n')
+            command = input(f'\n{bcolors.OKGREEN}{strings["command_list"][lan]}{bcolors.ENDC}\n')
             if command == "pause":
                 exit_event.set()
                 print(f'{datetime.datetime.now()} {strings["bot_paused"][lan]}')
@@ -58,7 +61,7 @@ def main():
             else:
                 print(f'{strings["invalid_command"][lan]} {strings["command_list"][lan]}\n')
     except Exception as e:
-        print(e)
+        print(f"{bcolors.FAIL}{e}{bcolors.ENDC}")
 
     thread.join()
 

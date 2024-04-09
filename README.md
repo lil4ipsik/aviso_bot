@@ -3,8 +3,8 @@ This is a test bot for automatic earnings on aviso.bz Here is a short instructio
 
 1. Download the latest python3 interpreter and firefox
 2. Check if pip is installed (pip in the console). If necessary, install it on your system
-3. Run the command "pip install selenium" in the console
-4. In authentication_data.txt, enter your aviso.bz login and password in the format login:password (optional)
+3. Run the command "pip install -r requirements" in the console
+4. In .env, enter your aviso.bz login and password (see example.env)
 5. In the settings, you can choose the language, go to settings.json and enter the one you need from the supported ones
 6. Start the bot (enter "python main.py" in the console for Windows and "python3 main.py" for other systems) from the bot folder
 7. Log in to the site (if you have completed step 4, you only need to pass the captcha and log in to the site)
@@ -20,8 +20,8 @@ ________________________________________________________________________________
 
 1. Завантажте останній інтерпретатор python3 і firefox
 2. Перевірте встановлений pip (pip у консолі). За потреби встановіть у своїй системі
-3. Запустіть у консолі команду "pip install selenium"
-4. У authentication_data.txt введіть логін і пароль від aviso.bz у форматі логін:пароль (опціонально)
+3. Запустіть у консолі команду "pip install -r requirements"
+4. У .env введіть логін і пароль від aviso.bz (див. example.env)
 5. У налаштуваннях Ви можете обрати мову, для цього перейдіть у settings.json та введіть потрібну із підтримуваних
 6. Запустіть бота (введіть у консолі «python main.py» для системи Windows і для іншої системи «python3 main.py») з папки бота
 7. Увійдіть на сайт (якщо ви виконали пункт 4, вам потрібно лише пройти капчу та увійти на сайті)

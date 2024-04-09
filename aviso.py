@@ -1,3 +1,5 @@
+import os
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException
@@ -13,6 +15,12 @@ import time
 from res.string import strings
 from bcolors import bcolors
 from browser import Browser
+from colorama import just_fix_windows_console
+from dotenv import load_dotenv
+
+
+load_dotenv()
+just_fix_windows_console()
 
 
 def _is_captcha_available(driver):
@@ -59,7 +67,7 @@ class Aviso:
                     time.sleep(1.5)
                     i.find_element(By.CLASS_NAME, 'start-yes-serf').click()
                 except Exception as e:
-                    print(e)
+                    print(f"{bcolors.FAIL}{e}{bcolors.ENDC}")
                     error_count += 1
                     continue
 
@@ -79,7 +87,7 @@ class Aviso:
                     driver.switch_to.frame('frminfo')
                     driver.find_element(By.TAG_NAME, 'a').click()
                 except Exception as e:
-                    print(e)
+                    print(f"{bcolors.FAIL}{e}{bcolors.ENDC}")
                     error_count += 1
                     time.sleep(3)
                 else:
@@ -136,7 +144,7 @@ class Aviso:
                     a.click()
                     time.sleep(1.5)
                 except Exception as e:
-                    print(e)
+                    print(f"{bcolors.FAIL}{e}{bcolors.ENDC}")
                     error_count += 1
                     continue
 
@@ -163,7 +171,7 @@ class Aviso:
                         time.sleep(5)
                         driver.switch_to.window(driver.window_handles[1])
                 except Exception as e:
-                    print(e)
+                    print(f"{bcolors.FAIL}{e}{bcolors.ENDC}")
                     print('time out')
                     error_count += 1
                     time.sleep(3)
@@ -202,26 +210,13 @@ class Aviso:
                 driver.add_cookie(cookie)
             driver.get(self.aviso_url)
         else:
-            print(f"{datetime.datetime.now()} {strings['cookies_not_find'][self.lan]}")
-            file = open("authentication_data.txt", "r")
-            auth_data = file.read().split(":")
-            file.close()
-
-            if len(auth_data) == 2:
-                login, password = auth_data
-            else:
-                login, password = "", ""
-
-            time.sleep(5)
-
             driver.find_element(By.CLASS_NAME, "button-login").click()
             time.sleep(3)
-            driver.find_elements(By.CLASS_NAME, "form-control")[0].send_keys(login)
+            driver.find_elements(By.CLASS_NAME, "form-control")[0].send_keys(os.getenv('login'))
             time.sleep(1)
-            driver.find_elements(By.CLASS_NAME, "form-control")[1].send_keys(password)
-            del auth_data, login, password
+            driver.find_elements(By.CLASS_NAME, "form-control")[1].send_keys(os.getenv('password'))
             while "https://aviso.bz/login" in driver.current_url:
-                print("Wait for login")
+                print(f"{bcolors.WARNING}Wait for login{bcolors.ENDC}")
                 time.sleep(1)
 
             pickle.dump(driver.get_cookies(), open("cookies", "wb"))
