@@ -3,6 +3,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import ElementNotInteractableException
 
 from os.path import exists
 import datetime
@@ -22,13 +23,16 @@ def _is_captcha_available(driver):
 
 
 class Aviso:
-    def __init__(self, settings):
+    def __init__(self, settings, exit_event):
         self.aviso_url = "https://aviso.bz/"
         self.total_earned_money = 0
         self.settings = settings.get_settings()
         self.lan = self.settings['language']
+        self.exit_event = exit_event
 
     def view_websites(self, driver):
+        while self.exit_event.is_set():
+            time.sleep(1)
         print(f"{datetime.datetime.now()} " +
               f"{strings['view_web'][self.lan]}"
               )
@@ -41,8 +45,10 @@ class Aviso:
         is_tasks_available = True
         if len(website_list) > 0:
             for i in website_list:
-                if error_count >= 10:
-                    break
+                while self.exit_event.is_set():
+                    time.sleep(1)
+                if error_count >= 3:
+                    return False
                 try:
                     a = i.find_element(By.TAG_NAME, "a")
                     price_span = i.find_element(By.XPATH, 'tbody/tr/td[3]/span[2]')
@@ -52,9 +58,8 @@ class Aviso:
                     a.click()
                     time.sleep(1.5)
                     i.find_element(By.CLASS_NAME, 'start-yes-serf').click()
-                except NoSuchElementException:
+                except (NoSuchElementException, ElementNotInteractableException):
                     error_count += 1
-                    time.sleep(3)
                     continue
 
                 for j in range(5):
@@ -98,6 +103,8 @@ class Aviso:
         }
 
     def watch_videos(self, driver):
+        while self.exit_event.is_set():
+            time.sleep(1)
         print(f"{datetime.datetime.now()} " +
               f"{strings['watch_videos'][self.lan]}"
               )
@@ -114,8 +121,10 @@ class Aviso:
         is_tasks_available = True if video_list else False
         if len(video_list) > 0:
             for i in video_list:
-                if error_count >= 10:
-                    break
+                while self.exit_event.is_set():
+                    time.sleep(1)
+                if error_count >= 3:
+                    return False
                 try:
                     a = i.find_element(By.TAG_NAME, "span")
                     price_span = i.find_element(By.XPATH, "tbody/tr/td[3]/span[2]")
@@ -126,7 +135,6 @@ class Aviso:
                     time.sleep(1.5)
                 except NoSuchElementException:
                     error_count += 1
-                    time.sleep(3)
                     continue
 
                 for j in range(5):
@@ -146,9 +154,7 @@ class Aviso:
                     time.sleep(time_sleep)
                     driver.switch_to.window(driver.window_handles[0])
                     if not ('С учетом рефбека на ваш счет начислено' in i.text):
-                        print("if not ('С учетом рефбека на ваш счет начислено' in i.text)")
                         driver.switch_to.window(driver.window_handles[1])
-                        wait.until(ec.url_changes(driver.current_url))
                         driver.switch_to.frame(wait.until(ec.presence_of_element_located((By.ID, 'video-start'))))
                         wait.until(ec.presence_of_element_located((By.ID, 'movie_player'))).click()
                         time.sleep(5)
