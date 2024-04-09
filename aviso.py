@@ -220,7 +220,9 @@ class Aviso:
             time.sleep(1)
             driver.find_elements(By.CLASS_NAME, "form-control")[1].send_keys(password)
             del auth_data, login, password
-            input(f"{datetime.datetime.now()} Press ENTER after log in")
+            while "https://aviso.bz/login" in driver.current_url:
+                print("Wait for login")
+                time.sleep(1)
 
             pickle.dump(driver.get_cookies(), open("cookies", "wb"))
         print(f"{datetime.datetime.now()} {strings['finish_log_in'][self.lan]}")
