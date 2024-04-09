@@ -108,9 +108,7 @@ class Aviso:
         else:
             is_tasks_available = False
 
-        return {
-            'is_tasks_available': is_tasks_available,
-        }
+        return is_tasks_available
 
     def watch_videos(self, driver):
         while self.exit_event.is_set():
@@ -193,9 +191,7 @@ class Aviso:
         else:
             is_tasks_available = False
 
-        return {
-            'is_tasks_available': is_tasks_available,
-        }
+        return is_tasks_available
 
     def log_in(self):
         print(f"{datetime.datetime.now()} {strings['start_log_in'][self.lan]}")
