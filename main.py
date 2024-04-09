@@ -53,10 +53,12 @@ def main():
             elif command == "resume":
                 exit_event.clear()
                 print(f'{datetime.datetime.now()} {strings["bot_resume"][lan]}')
+            elif command == "stop":
+                quit()
             else:
                 print(f'{strings["invalid_command"][lan]} {strings["command_list"][lan]}\n')
-    except KeyboardInterrupt:
-        exit_event.set()
+    except Exception as e:
+        print(e)
 
     thread.join()
 

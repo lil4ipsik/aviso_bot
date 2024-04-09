@@ -58,7 +58,8 @@ class Aviso:
                     a.click()
                     time.sleep(1.5)
                     i.find_element(By.CLASS_NAME, 'start-yes-serf').click()
-                except (NoSuchElementException, ElementNotInteractableException):
+                except Exception as e:
+                    print(e)
                     error_count += 1
                     continue
 
@@ -77,7 +78,8 @@ class Aviso:
                     time.sleep(time_sleep)
                     driver.switch_to.frame('frminfo')
                     driver.find_element(By.TAG_NAME, 'a').click()
-                except NoSuchElementException:
+                except Exception as e:
+                    print(e)
                     error_count += 1
                     time.sleep(3)
                 else:
@@ -133,7 +135,8 @@ class Aviso:
                     time_sleep = int(time_span.get_attribute('innerHTML').split()[0]) + 3
                     a.click()
                     time.sleep(1.5)
-                except NoSuchElementException:
+                except Exception as e:
+                    print(e)
                     error_count += 1
                     continue
 
@@ -159,7 +162,8 @@ class Aviso:
                         wait.until(ec.presence_of_element_located((By.ID, 'movie_player'))).click()
                         time.sleep(5)
                         driver.switch_to.window(driver.window_handles[1])
-                except TimeoutException:
+                except Exception as e:
+                    print(e)
                     print('time out')
                     error_count += 1
                     time.sleep(3)
