@@ -42,12 +42,11 @@ class Aviso:
     def view_websites(self, driver):
         while self.exit_event.is_set():
             time.sleep(1)
-        # print(f"{datetime.datetime.now()} " +
-        #      f"{strings['view_web'][self.lan]}"
-        #      )
+        self.log_box.append(f'<font color="">{datetime.datetime.now()} serf web</font>')
         driver.get("https://aviso.bz/work-serf")
-        if _is_captcha_available(driver):
-            input(f'\n\n\n{bcolors.WARNING}WARNING, COMPLETE THE CAPTCHA AND PRESS ENTER{bcolors.ENDC}\n\n\n')
+        while self.exit_event.is_set():
+            time.sleep(1)
+        self.log_box.append(f'<font color="">{datetime.datetime.now()} watch youtube</font>')
 
         error_count = 0
         website_list = driver.find_elements(By.CLASS_NAME, "work-serf")
@@ -68,7 +67,7 @@ class Aviso:
                     time.sleep(1.5)
                     i.find_element(By.CLASS_NAME, 'start-yes-serf').click()
                 except Exception as e:
-                    print(f"{bcolors.FAIL}{e}{bcolors.ENDC}")
+                    self.log_box.append(f'<font color="red">{datetime.datetime.now()} {e}</font>')
                     error_count += 1
                     continue
 
@@ -88,18 +87,15 @@ class Aviso:
                     driver.switch_to.frame('frminfo')
                     driver.find_element(By.TAG_NAME, 'a').click()
                 except Exception as e:
-                    print(f"{bcolors.FAIL}{e}{bcolors.ENDC}")
+                    self.log_box.append(f'<font color="red">{datetime.datetime.now()} {e}</font>')
                     error_count += 1
                     time.sleep(3)
                 else:
                     time.sleep(0.5)
                     self.total_earned_money += earned_money
-                    #print(
-                    #    f"{bcolors.OKGREEN}{datetime.datetime.now()} " +
-                    #    f"{strings['earned'][self.lan]}: " +
-                    #    f"{round(earned_money, 5)}, {strings['total'][self.lan]}: " +
-                    #    f"{round(self.total_earned_money, 5)}{bcolors.ENDC}"
-                    #)
+                    self.total_earned_money += earned_money
+                    self.log_box.append(f'<font color="green">{datetime.datetime.now()} earned: '
+                                        f'{round(earned_money, 5)}, total: {round(self.total_earned_money, 5)}</font>')
                 for handle in driver.window_handles[1:]:
                     driver.switch_to.window(handle)
                     driver.close()
@@ -114,13 +110,12 @@ class Aviso:
     def watch_videos(self, driver):
         while self.exit_event.is_set():
             time.sleep(1)
-        #print(f"{datetime.datetime.now()} " +
-        #      f"{strings['watch_videos'][self.lan]}"
-        #      )
+        self.log_box.append(f'<font color="">{datetime.datetime.now()} watch youtube</font>')
 
         driver.get("https://aviso.bz/work-youtube")
-        if _is_captcha_available(driver):
-            input(f'\n\n\n{bcolors.WARNING}WARNING, COMPLETE THE CAPTCHA AND PRESS ENTER{bcolors.ENDC}\n\n\n')
+        while _is_captcha_available(driver):
+            self.log_box.append(f'<font color="red">{datetime.datetime.now()} WARNING, COMPLETE THE CAPTCHA</font>')
+            time.sleep(1)
         wait = WebDriverWait(driver, 7)
         error_count = 0
         video_list = []
@@ -143,7 +138,7 @@ class Aviso:
                     a.click()
                     time.sleep(1.5)
                 except Exception as e:
-                    print(f"{bcolors.FAIL}{e}{bcolors.ENDC}")
+                    self.log_box.append(f'<font color="red">{datetime.datetime.now()} {e}</font>')
                     error_count += 1
                     continue
 
@@ -170,18 +165,13 @@ class Aviso:
                         time.sleep(5)
                         driver.switch_to.window(driver.window_handles[1])
                 except Exception as e:
-                    print(f"{bcolors.FAIL}{e}{bcolors.ENDC}")
-                    print('time out')
+                    self.log_box.append(f'<font color="red">{datetime.datetime.now()} {e}</font>')
                     error_count += 1
                     time.sleep(3)
                 else:
                     self.total_earned_money += earned_money
-                    #print(
-                    #    f"{bcolors.OKGREEN}{datetime.datetime.now()} " +
-                    #    f"{strings['earned'][self.lan]}: " +
-                    #    f"{round(earned_money, 5)}, {strings['total'][self.lan]}: " +
-                    #    f"{round(self.total_earned_money, 5)}{bcolors.ENDC}"
-                    #)
+                    self.log_box.append(f'<font color="green">{datetime.datetime.now()} earned: '
+                                        f'{round(earned_money, 5)}, total: {round(self.total_earned_money, 5)}</font>')
 
                 for handle in driver.window_handles[1:]:
                     driver.switch_to.window(handle)
@@ -195,29 +185,30 @@ class Aviso:
         return is_tasks_available
 
     def log_in(self):
-        #print(f"{datetime.datetime.now()} {strings['start_log_in'][self.lan]}")
+        self.log_box.append(f'<font color="">{datetime.datetime.now()} start log in</font>')
         driver = Browser(False).open_browser()
 
         driver.get(self.aviso_url)
 
         if exists("cookies"):
-            #print(f"{datetime.datetime.now()} {strings['cookies_find'][self.lan]}")
+            self.log_box.append(f'<font color="">{datetime.datetime.now()} cookies find</font>')
             for cookie in pickle.load(open("cookies", "rb")):
                 driver.add_cookie(cookie)
             driver.get(self.aviso_url)
             if 'Статус' in driver.page_source:
                 return driver
 
+        self.log_box.append(f'<font color="red">{datetime.datetime.now()} error with cookies. Manual og in</font>')
         driver.find_element(By.CLASS_NAME, "button-login").click()
         time.sleep(3)
         driver.find_elements(By.CLASS_NAME, "form-control")[0].send_keys(os.getenv('login'))
         time.sleep(1)
         driver.find_elements(By.CLASS_NAME, "form-control")[1].send_keys(os.getenv('password'))
         while "https://aviso.bz/login" in driver.current_url:
-            #print(f"{bcolors.WARNING}Wait for login{bcolors.ENDC}")
+            self.log_box.append(f'<font color="orange">{datetime.datetime.now()} wait for log in</font>')
             time.sleep(1)
 
         pickle.dump(driver.get_cookies(), open("cookies", "wb"))
-        #print(f"{datetime.datetime.now()} {strings['finish_log_in'][self.lan]}")
+        self.log_box.append(f'<font color="">{datetime.datetime.now()} finish log in</font>')
 
         return driver

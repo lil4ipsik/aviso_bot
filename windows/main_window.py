@@ -1,5 +1,4 @@
 # This Python file uses the following encoding: utf-8
-import logging
 import threading
 from datetime import datetime
 
@@ -24,25 +23,12 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
         self.bot_state = 'stop'
         self.exit_event = threading.Event()
-        self.bot = Bot(self.exit_event)
+        self.bot = Bot(self.exit_event, self.ui)
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.ui_update)
         self.timer.start(1000)
         self.ui.start_bot_button.clicked.connect(self.start_bot_button_clicked)
-
-        logger = logging.getLogger()
-        logger.setLevel(logging.DEBUG)
-        handler = QTextEditLogger(self.ui.logs)
-        formatter = logging.Formatter('%(asctime)s - %(message)s')
-        handler.setFormatter(formatter)
-        logger.addHandler(handler)
-
-        self.log_message("Початок роботи програми", "green", "white")
         self.show()
-
-    def log_message(self, log_box, message):
-        message_with_color = f"<font color='{text_color}'>{message}</font>"
-        log_box.append(message_with_color)
 
     def start_bot_button_clicked(self):
         if self.bot_state == 'stop':
@@ -62,13 +48,3 @@ class MainWindow(QMainWindow):
 
     def ui_update(self):
         self.ui.earned_money_label.setText(f'{self.bot.get_balance()}')
-
-
-class QTextEditLogger(logging.Handler):
-    def __init__(self, text_widget):
-        super().__init__()
-        self.text_widget = text_widget
-
-    def emit(self, record):
-        msg = self.format(record)
-        self.text_widget.append(msg)
