@@ -12,7 +12,6 @@ import datetime
 import pickle
 import time
 
-from res.string import strings
 from bcolors import bcolors
 from browser import Browser
 from colorama import just_fix_windows_console
@@ -31,19 +30,21 @@ def _is_captcha_available(driver):
 
 
 class Aviso:
-    def __init__(self, settings, exit_event):
+    def __init__(self, exit_event, log_box):
         self.aviso_url = "https://aviso.bz/"
         self.total_earned_money = 0
-        self.settings = settings.get_settings()
-        self.lan = self.settings['language']
         self.exit_event = exit_event
+        self.log_box = log_box
+
+    def get_balance(self):
+        return self.total_earned_money
 
     def view_websites(self, driver):
         while self.exit_event.is_set():
             time.sleep(1)
-        print(f"{datetime.datetime.now()} " +
-              f"{strings['view_web'][self.lan]}"
-              )
+        # print(f"{datetime.datetime.now()} " +
+        #      f"{strings['view_web'][self.lan]}"
+        #      )
         driver.get("https://aviso.bz/work-serf")
         if _is_captcha_available(driver):
             input(f'\n\n\n{bcolors.WARNING}WARNING, COMPLETE THE CAPTCHA AND PRESS ENTER{bcolors.ENDC}\n\n\n')
@@ -93,12 +94,12 @@ class Aviso:
                 else:
                     time.sleep(0.5)
                     self.total_earned_money += earned_money
-                    print(
-                        f"{bcolors.OKGREEN}{datetime.datetime.now()} " +
-                        f"{strings['earned'][self.lan]}: " +
-                        f"{round(earned_money, 5)}, {strings['total'][self.lan]}: " +
-                        f"{round(self.total_earned_money, 5)}{bcolors.ENDC}"
-                    )
+                    #print(
+                    #    f"{bcolors.OKGREEN}{datetime.datetime.now()} " +
+                    #    f"{strings['earned'][self.lan]}: " +
+                    #    f"{round(earned_money, 5)}, {strings['total'][self.lan]}: " +
+                    #    f"{round(self.total_earned_money, 5)}{bcolors.ENDC}"
+                    #)
                 for handle in driver.window_handles[1:]:
                     driver.switch_to.window(handle)
                     driver.close()
@@ -113,9 +114,9 @@ class Aviso:
     def watch_videos(self, driver):
         while self.exit_event.is_set():
             time.sleep(1)
-        print(f"{datetime.datetime.now()} " +
-              f"{strings['watch_videos'][self.lan]}"
-              )
+        #print(f"{datetime.datetime.now()} " +
+        #      f"{strings['watch_videos'][self.lan]}"
+        #      )
 
         driver.get("https://aviso.bz/work-youtube")
         if _is_captcha_available(driver):
@@ -175,12 +176,12 @@ class Aviso:
                     time.sleep(3)
                 else:
                     self.total_earned_money += earned_money
-                    print(
-                        f"{bcolors.OKGREEN}{datetime.datetime.now()} " +
-                        f"{strings['earned'][self.lan]}: " +
-                        f"{round(earned_money, 5)}, {strings['total'][self.lan]}: " +
-                        f"{round(self.total_earned_money, 5)}{bcolors.ENDC}"
-                    )
+                    #print(
+                    #    f"{bcolors.OKGREEN}{datetime.datetime.now()} " +
+                    #    f"{strings['earned'][self.lan]}: " +
+                    #    f"{round(earned_money, 5)}, {strings['total'][self.lan]}: " +
+                    #    f"{round(self.total_earned_money, 5)}{bcolors.ENDC}"
+                    #)
 
                 for handle in driver.window_handles[1:]:
                     driver.switch_to.window(handle)
@@ -194,28 +195,29 @@ class Aviso:
         return is_tasks_available
 
     def log_in(self):
-        print(f"{datetime.datetime.now()} {strings['start_log_in'][self.lan]}")
-        driver = Browser(self.settings['browser_is_headless']
-                         ).open_browser() if exists("cookies") else Browser(False).open_browser()
+        #print(f"{datetime.datetime.now()} {strings['start_log_in'][self.lan]}")
+        driver = Browser(False).open_browser()
 
         driver.get(self.aviso_url)
 
         if exists("cookies"):
-            print(f"{datetime.datetime.now()} {strings['cookies_find'][self.lan]}")
+            #print(f"{datetime.datetime.now()} {strings['cookies_find'][self.lan]}")
             for cookie in pickle.load(open("cookies", "rb")):
                 driver.add_cookie(cookie)
             driver.get(self.aviso_url)
-        else:
-            driver.find_element(By.CLASS_NAME, "button-login").click()
-            time.sleep(3)
-            driver.find_elements(By.CLASS_NAME, "form-control")[0].send_keys(os.getenv('login'))
-            time.sleep(1)
-            driver.find_elements(By.CLASS_NAME, "form-control")[1].send_keys(os.getenv('password'))
-            while "https://aviso.bz/login" in driver.current_url:
-                print(f"{bcolors.WARNING}Wait for login{bcolors.ENDC}")
-                time.sleep(1)
+            if 'Статус' in driver.page_source:
+                return driver
 
-            pickle.dump(driver.get_cookies(), open("cookies", "wb"))
-        print(f"{datetime.datetime.now()} {strings['finish_log_in'][self.lan]}")
+        driver.find_element(By.CLASS_NAME, "button-login").click()
+        time.sleep(3)
+        driver.find_elements(By.CLASS_NAME, "form-control")[0].send_keys(os.getenv('login'))
+        time.sleep(1)
+        driver.find_elements(By.CLASS_NAME, "form-control")[1].send_keys(os.getenv('password'))
+        while "https://aviso.bz/login" in driver.current_url:
+            #print(f"{bcolors.WARNING}Wait for login{bcolors.ENDC}")
+            time.sleep(1)
+
+        pickle.dump(driver.get_cookies(), open("cookies", "wb"))
+        #print(f"{datetime.datetime.now()} {strings['finish_log_in'][self.lan]}")
 
         return driver
