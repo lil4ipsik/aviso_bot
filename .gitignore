@@ -1,1 +1,9 @@
 /.env
+/cookies
+/build/**
+/dist/**
+/.idea/**
+
+run.spec
+main.spec
+favicon.ico
