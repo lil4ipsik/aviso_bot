@@ -10,8 +10,8 @@ class Bot:
         self.ui = ui
         self.aviso = Aviso(exit_event, ui.log_box)
 
-    def run_bot(self):
-        self.driver = self.aviso.log_in()
+    def run_bot(self, login, password):
+        self.driver = self.aviso.log_in(login, password)
         time.sleep(5)
         is_video_tasks_available = True
         is_website_tasks_available = True

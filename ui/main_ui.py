@@ -16,17 +16,20 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QHBoxLayout, QLabel, QLayout,
-    QMainWindow, QPushButton, QSizePolicy, QSpacerItem,
-    QTextEdit, QVBoxLayout, QWidget)
+    QLineEdit, QMainWindow, QPushButton, QSizePolicy,
+    QSpacerItem, QTabWidget, QTextEdit, QVBoxLayout,
+    QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(400, 480)
+        MainWindow.resize(412, 502)
         MainWindow.setMinimumSize(QSize(400, 480))
-        MainWindow.setMaximumSize(QSize(1000, 1000))
+        MainWindow.setMaximumSize(QSize(16777215, 16777215))
+        MainWindow.setWindowOpacity(1.000000000000000)
         MainWindow.setStyleSheet(u"background-color: #F5F5F5;")
+        MainWindow.setTabShape(QTabWidget.TabShape.Triangular)
         self.verticalWidget = QWidget(MainWindow)
         self.verticalWidget.setObjectName(u"verticalWidget")
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
@@ -62,7 +65,44 @@ class Ui_MainWindow(object):
 
         self.vboxLayout.addLayout(self.horizontalLayout)
 
-        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+        self.horizontalWidget = QWidget(self.verticalWidget)
+        self.horizontalWidget.setObjectName(u"horizontalWidget")
+        self.horizontalWidget.setMinimumSize(QSize(0, 0))
+        self.horizontalLayout_3 = QHBoxLayout(self.horizontalWidget)
+        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
+        self.label_2 = QLabel(self.horizontalWidget)
+        self.label_2.setObjectName(u"label_2")
+
+        self.horizontalLayout_3.addWidget(self.label_2)
+
+        self.login_edit = QLineEdit(self.horizontalWidget)
+        self.login_edit.setObjectName(u"login_edit")
+
+        self.horizontalLayout_3.addWidget(self.login_edit)
+
+
+        self.vboxLayout.addWidget(self.horizontalWidget)
+
+        self.horizontalWidgetc = QWidget(self.verticalWidget)
+        self.horizontalWidgetc.setObjectName(u"horizontalWidgetc")
+        self.horizontalWidgetc.setMinimumSize(QSize(0, 0))
+        self.horizontalLayout_4 = QHBoxLayout(self.horizontalWidgetc)
+        self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
+        self.label_3 = QLabel(self.horizontalWidgetc)
+        self.label_3.setObjectName(u"label_3")
+
+        self.horizontalLayout_4.addWidget(self.label_3)
+
+        self.password_edit = QLineEdit(self.horizontalWidgetc)
+        self.password_edit.setObjectName(u"password_edit")
+        self.password_edit.setEchoMode(QLineEdit.EchoMode.Password)
+
+        self.horizontalLayout_4.addWidget(self.password_edit)
+
+
+        self.vboxLayout.addWidget(self.horizontalWidgetc)
+
+        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
 
         self.vboxLayout.addItem(self.verticalSpacer)
 
@@ -118,6 +158,8 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"Total earned:", None))
         self.earned_money_label.setText(QCoreApplication.translate("MainWindow", u"0", None))
+        self.label_2.setText(QCoreApplication.translate("MainWindow", u"Login      ", None))
+        self.label_3.setText(QCoreApplication.translate("MainWindow", u"Password", None))
         self.start_bot_button.setText(QCoreApplication.translate("MainWindow", u"Run", None))
         self.log_box.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"

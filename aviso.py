@@ -184,7 +184,7 @@ class Aviso:
 
         return is_tasks_available
 
-    def log_in(self):
+    def log_in(self, login, password):
         self.log_box.append(f'<font color="">{datetime.datetime.now()} start log in</font>')
         driver = Browser(False).open_browser()
 
@@ -201,9 +201,9 @@ class Aviso:
         self.log_box.append(f'<font color="red">{datetime.datetime.now()} error with cookies. Manual og in</font>')
         driver.find_element(By.CLASS_NAME, "button-login").click()
         time.sleep(3)
-        driver.find_elements(By.CLASS_NAME, "form-control")[0].send_keys(os.getenv('login'))
+        driver.find_elements(By.CLASS_NAME, "form-control")[0].send_keys(login)
         time.sleep(1)
-        driver.find_elements(By.CLASS_NAME, "form-control")[1].send_keys(os.getenv('password'))
+        driver.find_elements(By.CLASS_NAME, "form-control")[1].send_keys(password)
         while "https://aviso.bz/login" in driver.current_url:
             self.log_box.append(f'<font color="orange">{datetime.datetime.now()} wait for log in</font>')
             time.sleep(1)
