@@ -21,10 +21,11 @@ def _is_captcha_available(driver):
 
 
 class Aviso:
-    def __init__(self, exit_event, log_box):
+    def __init__(self, exit_event, ui,log_box):
         self.aviso_url = "https://aviso.bz/"
         self.total_earned_money = 0
         self.exit_event = exit_event
+        self.ui = ui
         self.log_box = log_box
 
     def get_balance(self):
@@ -39,6 +40,8 @@ class Aviso:
             time.sleep(1)
         self.log_box.append(f'<font color="">{datetime.datetime.now()} watch youtube</font>')
 
+        if driver.find_elements(By.CLASS_NAME, "form-control"):
+            self.log_in(driver, self.ui.login_edit.text(), self.ui.password_edit.text())
         error_count = 0
         website_list = driver.find_elements(By.CLASS_NAME, "work-serf")
         is_tasks_available = True
@@ -110,6 +113,8 @@ class Aviso:
         wait = WebDriverWait(driver, 7)
         error_count = 0
         video_list = []
+        if driver.find_elements(By.CLASS_NAME, "form-control"):
+            self.log_in(driver, self.ui.login_edit.text(), self.ui.password_edit.text())
         for task in driver.find_elements(By.CLASS_NAME, "work-serf"):
             if 'Просмотр видеоролика' in task.text:
                 video_list.append(task)

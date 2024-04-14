@@ -12,7 +12,7 @@ class Bot:
         self.driver = None
         self.is_running = True
         self.ui = ui
-        self.aviso = Aviso(exit_event, ui.log_box)
+        self.aviso = Aviso(exit_event, ui, ui.log_box)
 
     def run_bot(self, login, password):
         self.is_running = True
@@ -32,7 +32,7 @@ class Bot:
 
             self.ui.log_box.append(f'<font color="red">{datetime.datetime.now()} task isn`t available</font>')
             for i in range(3000)[::-1]:
-                if self.driver:
+                if self.is_running:
                     self.ui.log_box.append(f'<font color="orange">sleep {i}</font>')
                     time.sleep(1)
                 else:
