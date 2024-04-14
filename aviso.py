@@ -193,8 +193,13 @@ class Aviso:
         driver.find_elements(By.CLASS_NAME, "form-control")[0].send_keys(login)
         time.sleep(1)
         driver.find_elements(By.CLASS_NAME, "form-control")[1].send_keys(password)
+        time.sleep(1)
+        driver.find_element(By.ID, 'button-login').click()
         while "https://aviso.bz/login" in driver.current_url:
-            self.log_box.append(f'<font color="orange">{datetime.datetime.now()} wait for log in</font>')
+            if driver.find_elements(By.ID, 'anchor'):
+                self.log_box.append(f'<font color="red">{datetime.datetime.now()} COMPLETE THE CAPTCHA</font>')
+            else:
+                self.log_box.append(f'<font color="orange">{datetime.datetime.now()} wait for log in</font>')
             time.sleep(1)
 
         pickle.dump(driver.get_cookies(), open("cookies", "wb"))

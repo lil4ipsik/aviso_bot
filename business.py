@@ -31,9 +31,12 @@ class Bot:
                 continue
 
             self.ui.log_box.append(f'<font color="red">{datetime.datetime.now()} task isn`t available</font>')
-            for i in range(3600)[::-1]:
-                self.ui.log_box.append(f'<font color="orange">sleep {i}</font>')
-                time.sleep(1)
+            for i in range(3000)[::-1]:
+                if self.driver:
+                    self.ui.log_box.append(f'<font color="orange">sleep {i}</font>')
+                    time.sleep(1)
+                else:
+                    break
             is_video_tasks_available = True
             is_website_tasks_available = True
         print('finish run_bot')
