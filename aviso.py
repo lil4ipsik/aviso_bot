@@ -1,22 +1,13 @@
-import os
-
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.common.exceptions import NoSuchElementException
-from selenium.webdriver.support import expected_conditions as ec
-from selenium.common.exceptions import TimeoutException
-from selenium.common.exceptions import ElementNotInteractableException
-
-from os.path import exists
 import datetime
 import pickle
 import time
+from os.path import exists
 
-from bcolors import bcolors
-from browser import Browser
 from colorama import just_fix_windows_console
 from dotenv import load_dotenv
-
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as ec
+from selenium.webdriver.support.ui import WebDriverWait
 
 load_dotenv()
 just_fix_windows_console()
@@ -184,10 +175,8 @@ class Aviso:
 
         return is_tasks_available
 
-    def log_in(self, login, password):
+    def log_in(self, driver,  login, password):
         self.log_box.append(f'<font color="">{datetime.datetime.now()} start log in</font>')
-        driver = Browser(False).open_browser()
-
         driver.get(self.aviso_url)
 
         if exists("cookies"):
@@ -196,7 +185,7 @@ class Aviso:
                 driver.add_cookie(cookie)
             driver.get(self.aviso_url)
             if 'Статус' in driver.page_source:
-                return driver
+                return
 
         self.log_box.append(f'<font color="red">{datetime.datetime.now()} error with cookies. Manual og in</font>')
         driver.find_element(By.CLASS_NAME, "button-login").click()
@@ -210,5 +199,3 @@ class Aviso:
 
         pickle.dump(driver.get_cookies(), open("cookies", "wb"))
         self.log_box.append(f'<font color="">{datetime.datetime.now()} finish log in</font>')
-
-        return driver

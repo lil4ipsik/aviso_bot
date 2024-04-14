@@ -127,6 +127,16 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_2.addWidget(self.start_bot_button)
 
+        self.stop_bot_button = QPushButton(self.verticalWidget)
+        self.stop_bot_button.setObjectName(u"stop_bot_button")
+        self.stop_bot_button.setMinimumSize(QSize(150, 30))
+        self.stop_bot_button.setMaximumSize(QSize(150, 30))
+        self.stop_bot_button.setStyleSheet(u"background-color: #A93838;\n"
+"color: #ffffff;\n"
+"border-radius: 15px;")
+
+        self.horizontalLayout_2.addWidget(self.stop_bot_button)
+
         self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_2.addItem(self.horizontalSpacer_3)
@@ -144,6 +154,7 @@ class Ui_MainWindow(object):
 "color: rgb(255, 255, 255);\n"
 "background-color: rgb(0, 0, 0);")
         self.log_box.setReadOnly(True)
+        self.log_box.setOverwriteMode(True)
 
         self.vboxLayout.addWidget(self.log_box)
 
@@ -161,6 +172,7 @@ class Ui_MainWindow(object):
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"Login      ", None))
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"Password", None))
         self.start_bot_button.setText(QCoreApplication.translate("MainWindow", u"Run", None))
+        self.stop_bot_button.setText(QCoreApplication.translate("MainWindow", u"Stop", None))
         self.log_box.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
