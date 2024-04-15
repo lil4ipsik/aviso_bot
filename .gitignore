@@ -3,6 +3,8 @@
 /build/**
 /dist/**
 /.idea/**
+/.venv
+__pycache__
 
 run.spec
 main.spec
