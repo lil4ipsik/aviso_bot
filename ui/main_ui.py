@@ -24,9 +24,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(412, 502)
-        MainWindow.setMinimumSize(QSize(400, 480))
-        MainWindow.setMaximumSize(QSize(16777215, 16777215))
+        MainWindow.setFixedSize(412, 502)
         MainWindow.setWindowOpacity(1.000000000000000)
         MainWindow.setStyleSheet(u"background-color: #F5F5F5;")
         MainWindow.setTabShape(QTabWidget.Rounded)
