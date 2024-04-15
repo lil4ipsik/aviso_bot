@@ -4,7 +4,7 @@ import time
 from selenium.common import WebDriverException
 
 from aviso import Aviso
-from browser import Browser
+from browser import Firefox, Chrome
 
 
 class Bot:
@@ -14,9 +14,12 @@ class Bot:
         self.ui = ui
         self.aviso = Aviso(exit_event, ui, ui.log_box)
 
-    def run_bot(self, login, password):
+    def run_bot(self, login, password, browser):
         self.is_running = True
-        self.driver = Browser().open_browser()
+        if browser == 'Firefox':
+            self.driver = Firefox().open_browser()
+        elif browser == 'Chrome':
+            self.driver = Chrome().open_browser()
         self._login(login, password)
         is_video_tasks_available = True
         is_website_tasks_available = True
