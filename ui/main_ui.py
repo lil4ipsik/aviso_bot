@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'main.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.7.0
+## Created by: Qt User Interface Compiler version 6.6.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -15,10 +15,10 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QHBoxLayout, QLabel, QLayout,
-    QLineEdit, QMainWindow, QPushButton, QSizePolicy,
-    QSpacerItem, QTabWidget, QTextEdit, QVBoxLayout,
-    QWidget)
+from PySide6.QtWidgets import (QApplication, QComboBox, QHBoxLayout, QLabel,
+    QLayout, QLineEdit, QMainWindow, QPushButton,
+    QSizePolicy, QSpacerItem, QTabWidget, QTextEdit,
+    QVBoxLayout, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -29,7 +29,7 @@ class Ui_MainWindow(object):
         MainWindow.setMaximumSize(QSize(16777215, 16777215))
         MainWindow.setWindowOpacity(1.000000000000000)
         MainWindow.setStyleSheet(u"background-color: #F5F5F5;")
-        MainWindow.setTabShape(QTabWidget.TabShape.Triangular)
+        MainWindow.setTabShape(QTabWidget.Rounded)
         self.verticalWidget = QWidget(MainWindow)
         self.verticalWidget.setObjectName(u"verticalWidget")
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
@@ -38,10 +38,10 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.verticalWidget.sizePolicy().hasHeightForWidth())
         self.verticalWidget.setSizePolicy(sizePolicy)
         self.verticalWidget.setMaximumSize(QSize(1000, 1000))
-        self.verticalWidget.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
+        self.verticalWidget.setLayoutDirection(Qt.LeftToRight)
         self.vboxLayout = QVBoxLayout(self.verticalWidget)
         self.vboxLayout.setObjectName(u"vboxLayout")
-        self.vboxLayout.setSizeConstraint(QLayout.SizeConstraint.SetMaximumSize)
+        self.vboxLayout.setSizeConstraint(QLayout.SetDefaultConstraint)
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.label = QLabel(self.verticalWidget)
@@ -58,7 +58,7 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout.addWidget(self.earned_money_label)
 
-        self.horizontalSpacer_4 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.horizontalSpacer_4 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.horizontalLayout.addItem(self.horizontalSpacer_4)
 
@@ -95,20 +95,40 @@ class Ui_MainWindow(object):
 
         self.password_edit = QLineEdit(self.horizontalWidgetc)
         self.password_edit.setObjectName(u"password_edit")
-        self.password_edit.setEchoMode(QLineEdit.EchoMode.Password)
+        self.password_edit.setEchoMode(QLineEdit.Password)
 
         self.horizontalLayout_4.addWidget(self.password_edit)
 
 
         self.vboxLayout.addWidget(self.horizontalWidgetc)
 
-        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        self.horizontalLayout_6 = QHBoxLayout()
+        self.horizontalLayout_6.setSpacing(6)
+        self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
+        self.horizontalLayout_6.setContentsMargins(10, 10, 10, 10)
+        self.label_4 = QLabel(self.verticalWidget)
+        self.label_4.setObjectName(u"label_4")
+        self.label_4.setMaximumSize(QSize(45, 16777215))
+
+        self.horizontalLayout_6.addWidget(self.label_4)
+
+        self.comboBox = QComboBox(self.verticalWidget)
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.comboBox.setObjectName(u"comboBox")
+
+        self.horizontalLayout_6.addWidget(self.comboBox)
+
+
+        self.vboxLayout.addLayout(self.horizontalLayout_6)
+
+        self.verticalSpacer = QSpacerItem(20, 30, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
 
         self.vboxLayout.addItem(self.verticalSpacer)
 
         self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.horizontalLayout_2.addItem(self.horizontalSpacer_2)
 
@@ -137,14 +157,14 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_2.addWidget(self.stop_bot_button)
 
-        self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.horizontalLayout_2.addItem(self.horizontalSpacer_3)
 
 
         self.vboxLayout.addLayout(self.horizontalLayout_2)
 
-        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.vboxLayout.addItem(self.horizontalSpacer)
 
@@ -166,20 +186,21 @@ class Ui_MainWindow(object):
     # setupUi
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"aviso.bz bot", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"Total earned:", None))
         self.earned_money_label.setText(QCoreApplication.translate("MainWindow", u"0", None))
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"Login      ", None))
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"Password", None))
+        self.label_4.setText(QCoreApplication.translate("MainWindow", u"Browser", None))
+        self.comboBox.setItemText(0, QCoreApplication.translate("MainWindow", u"Firefox", None))
+        self.comboBox.setItemText(1, QCoreApplication.translate("MainWindow", u"Chrome", None))
+
         self.start_bot_button.setText(QCoreApplication.translate("MainWindow", u"Run", None))
         self.stop_bot_button.setText(QCoreApplication.translate("MainWindow", u"Stop", None))
         self.log_box.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
-"hr { height: 1px; border-width: 0; }\n"
-"li.unchecked::marker { content: \"\\2610\"; }\n"
-"li.checked::marker { content: \"\\2612\"; }\n"
-"</style></head><body style=\" font-family:'Segoe UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>", None))
+"</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Segoe UI'; font-size:9pt;\"><br /></p></body></html>", None))
     # retranslateUi
 

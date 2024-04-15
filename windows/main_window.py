@@ -38,8 +38,9 @@ class MainWindow(QMainWindow):
             self.bot_state = 'running'
             self.exit_event.clear()
             self.ui.start_bot_button.setText('Pause')
+            self.selected_browser = self.ui.comboBox.currentText()
             self.bot_thread = threading.Thread(target=self.bot.run_bot, args=(self.ui.login_edit.text(),
-                                                                              self.ui.password_edit.text()))
+                                                                              self.ui.password_edit.text(), self.selected_browser))
             self.bot_thread.daemon = True
             self.bot_thread.start()
         elif self.bot_state == 'running':
