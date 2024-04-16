@@ -1,6 +1,8 @@
 # Aviso Bot  
 ![Static Badge](https://img.shields.io/badge/Windows_10--11-Compatible-darkgreen?logo=windows)
 ![Static Badge](https://img.shields.io/badge/Windows_7--8.1-Not_compatible-darkred?logo=windowsxp)
+![Static Badge](https://img.shields.io/badge/Linux-Not_tested-darkgray?logo=linux&logoColor=white)
+![Static Badge](https://img.shields.io/badge/MacOS-Not_tested-darkgray?logo=apple)
 
 This is a test bot for automatic earnings on aviso.bz Here is a short instruction to manually run the bot:
 
