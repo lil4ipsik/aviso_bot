@@ -24,17 +24,23 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.setFixedSize(412, 502)
+        MainWindow.resize(400, 320)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
+        MainWindow.setSizePolicy(sizePolicy)
+        MainWindow.setFixedSize(QSize(400, 320))
         MainWindow.setWindowOpacity(1.000000000000000)
         MainWindow.setStyleSheet(u"background-color: #F5F5F5;")
         MainWindow.setTabShape(QTabWidget.Rounded)
         self.verticalWidget = QWidget(MainWindow)
         self.verticalWidget.setObjectName(u"verticalWidget")
-        sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        sizePolicy.setHorizontalStretch(99)
-        sizePolicy.setVerticalStretch(99)
-        sizePolicy.setHeightForWidth(self.verticalWidget.sizePolicy().hasHeightForWidth())
-        self.verticalWidget.setSizePolicy(sizePolicy)
+        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        sizePolicy1.setHorizontalStretch(99)
+        sizePolicy1.setVerticalStretch(99)
+        sizePolicy1.setHeightForWidth(self.verticalWidget.sizePolicy().hasHeightForWidth())
+        self.verticalWidget.setSizePolicy(sizePolicy1)
         self.verticalWidget.setMaximumSize(QSize(1000, 1000))
         self.verticalWidget.setLayoutDirection(Qt.LeftToRight)
         self.vboxLayout = QVBoxLayout(self.verticalWidget)
@@ -42,6 +48,10 @@ class Ui_MainWindow(object):
         self.vboxLayout.setSizeConstraint(QLayout.SetDefaultConstraint)
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+
+        self.horizontalLayout.addItem(self.verticalSpacer)
+
         self.label = QLabel(self.verticalWidget)
         self.label.setObjectName(u"label")
         font = QFont()
@@ -52,7 +62,10 @@ class Ui_MainWindow(object):
 
         self.earned_money_label = QLabel(self.verticalWidget)
         self.earned_money_label.setObjectName(u"earned_money_label")
+        self.earned_money_label.setMinimumSize(QSize(104, 0))
+        self.earned_money_label.setMaximumSize(QSize(104, 16777215))
         self.earned_money_label.setFont(font)
+        self.earned_money_label.setAlignment(Qt.AlignCenter)
 
         self.horizontalLayout.addWidget(self.earned_money_label)
 
@@ -70,6 +83,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
         self.label_2 = QLabel(self.horizontalWidget)
         self.label_2.setObjectName(u"label_2")
+        self.label_2.setMinimumSize(QSize(0, 0))
 
         self.horizontalLayout_3.addWidget(self.label_2)
 
@@ -78,27 +92,19 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_3.addWidget(self.login_edit)
 
-
-        self.vboxLayout.addWidget(self.horizontalWidget)
-
-        self.horizontalWidgetc = QWidget(self.verticalWidget)
-        self.horizontalWidgetc.setObjectName(u"horizontalWidgetc")
-        self.horizontalWidgetc.setMinimumSize(QSize(0, 0))
-        self.horizontalLayout_4 = QHBoxLayout(self.horizontalWidgetc)
-        self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
-        self.label_3 = QLabel(self.horizontalWidgetc)
+        self.label_3 = QLabel(self.horizontalWidget)
         self.label_3.setObjectName(u"label_3")
 
-        self.horizontalLayout_4.addWidget(self.label_3)
+        self.horizontalLayout_3.addWidget(self.label_3)
 
-        self.password_edit = QLineEdit(self.horizontalWidgetc)
+        self.password_edit = QLineEdit(self.horizontalWidget)
         self.password_edit.setObjectName(u"password_edit")
         self.password_edit.setEchoMode(QLineEdit.Password)
 
-        self.horizontalLayout_4.addWidget(self.password_edit)
+        self.horizontalLayout_3.addWidget(self.password_edit)
 
 
-        self.vboxLayout.addWidget(self.horizontalWidgetc)
+        self.vboxLayout.addWidget(self.horizontalWidget)
 
         self.horizontalLayout_6 = QHBoxLayout()
         self.horizontalLayout_6.setSpacing(6)
@@ -117,13 +123,6 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_6.addWidget(self.comboBox)
 
-
-        self.vboxLayout.addLayout(self.horizontalLayout_6)
-
-        self.verticalSpacer = QSpacerItem(20, 30, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
-
-        self.vboxLayout.addItem(self.verticalSpacer)
-
         self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
         self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
@@ -132,12 +131,12 @@ class Ui_MainWindow(object):
 
         self.start_bot_button = QPushButton(self.verticalWidget)
         self.start_bot_button.setObjectName(u"start_bot_button")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
-        sizePolicy1.setHorizontalStretch(0)
-        sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(self.start_bot_button.sizePolicy().hasHeightForWidth())
-        self.start_bot_button.setSizePolicy(sizePolicy1)
-        self.start_bot_button.setMinimumSize(QSize(150, 30))
+        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        sizePolicy2.setHorizontalStretch(0)
+        sizePolicy2.setVerticalStretch(0)
+        sizePolicy2.setHeightForWidth(self.start_bot_button.sizePolicy().hasHeightForWidth())
+        self.start_bot_button.setSizePolicy(sizePolicy2)
+        self.start_bot_button.setMinimumSize(QSize(60, 30))
         self.start_bot_button.setMaximumSize(QSize(150, 30))
         self.start_bot_button.setStyleSheet(u"background-color: rgb(56, 169, 98);\n"
 "color: #ffffff;\n"
@@ -147,7 +146,7 @@ class Ui_MainWindow(object):
 
         self.stop_bot_button = QPushButton(self.verticalWidget)
         self.stop_bot_button.setObjectName(u"stop_bot_button")
-        self.stop_bot_button.setMinimumSize(QSize(150, 30))
+        self.stop_bot_button.setMinimumSize(QSize(60, 30))
         self.stop_bot_button.setMaximumSize(QSize(150, 30))
         self.stop_bot_button.setStyleSheet(u"background-color: #A93838;\n"
 "color: #ffffff;\n"
@@ -160,11 +159,10 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.addItem(self.horizontalSpacer_3)
 
 
-        self.vboxLayout.addLayout(self.horizontalLayout_2)
+        self.horizontalLayout_6.addLayout(self.horizontalLayout_2)
 
-        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
-        self.vboxLayout.addItem(self.horizontalSpacer)
+        self.vboxLayout.addLayout(self.horizontalLayout_6)
 
         self.log_box = QTextEdit(self.verticalWidget)
         self.log_box.setObjectName(u"log_box")
