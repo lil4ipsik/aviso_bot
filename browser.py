@@ -29,6 +29,7 @@ class Chrome:
         self.options.add_argument("--disable-infobars")
         self.options.add_argument("--disable-notifications")
         self.options.add_argument("--disable-popup-blocking")
+        self.options.add_argument("--mute-audio")
 
     def open_browser(self):
         driver = webdriver.Chrome(options=self.options)

@@ -14,8 +14,13 @@ class Bot:
         self.ui = ui
         self.aviso = Aviso(exit_event, ui, ui.log_box)
 
+    def append_log(self, text):
+        self.ui.log_box.append(text)
+        self.ui.log_box.verticalScrollBar().setValue(self.ui.log_box.verticalScrollBar().maximum())
+
     def run_bot(self, login, password, browser):
         self.is_running = True
+        self.append_log(f'<font color="green">{datetime.datetime.now()} using {browser}</font>')
         if browser == 'Firefox':
             self.driver = Firefox().open_browser()
         elif browser == 'Chrome':
@@ -30,19 +35,20 @@ class Bot:
                     is_website_tasks_available = self.aviso.view_websites(self.driver)
                     continue
             except Exception as e:
-                self.ui.log_box.append(f'<font color="red">{datetime.datetime.now()} {e}</font>')
+                self.append_log(f'<font color="red">{datetime.datetime.now()} {e}</font>')
                 continue
 
-            self.ui.log_box.append(f'<font color="red">{datetime.datetime.now()} task isn`t available</font>')
+            self.append_log(f'<font color="red">{datetime.datetime.now()} task isn`t available</font>')
             for i in range(3000)[::-1]:
                 if self.is_running:
-                    self.ui.log_box.append(f'<font color="orange">sleep {i}</font>')
+                    self.append_log(f'<font color="orange">sleep {i}</font>')
                     time.sleep(1)
                 else:
                     break
             is_video_tasks_available = True
             is_website_tasks_available = True
         print('finish run_bot')
+        self.append_log(f'<font color="red">{datetime.datetime.now()} bot is stopped</font>')
         self.is_running = True
 
     def get_balance(self):
@@ -56,5 +62,5 @@ class Bot:
         try:
             self.aviso.log_in(self.driver, login, password)
         except Exception as e:
-            self.ui.log_box.append(f'<font color="red">{datetime.datetime.now()} {e}</font>')
+            self.append_log(f'<font color="red">{datetime.datetime.now()} {e}</font>')
             self.stop()
