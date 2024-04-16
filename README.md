@@ -1,4 +1,7 @@
-# Aviso Bot
+# Aviso Bot  
+![Static Badge](https://img.shields.io/badge/Windows_10--11-Compatible-darkgreen?logo=windows)
+![Static Badge](https://img.shields.io/badge/Windows_7--8.1-Not_compatible-darkred?logo=windowsxp)
+
 This is a test bot for automatic earnings on aviso.bz Here is a short instruction to manually run the bot:
 
 1. Download the latest [Python3](https://www.python.org/ftp/python/3.12.3/python-3.12.3-amd64.exe) interpreter and [Firefox](https://www.mozilla.org/en-US/firefox/new/) or [Chrome](https://chrome.com/)
