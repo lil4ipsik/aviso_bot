@@ -1,6 +1,6 @@
 /.env
 /cookies
-/build/**
+/build
 /dist/**
 /.idea/**
 /.venv
