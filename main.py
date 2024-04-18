@@ -9,7 +9,7 @@
 # nuitka-project: --product-name="Aviso Bot"                        
 # nuitka-project: --windows-icon-from-ico={MAIN_DIRECTORY}/windows/icon.ico
 # nuitka-project: --product-version=0.0.0.4   
-# nuitka-project: -o "aviso bot"                                                    
+# nuitka-project: -o "aviso-bot"                                                    
 ########################################################################################
 
 import sys
