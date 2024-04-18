@@ -5,7 +5,7 @@
 # nuitka-project: --deployment
 # nuitka-project: --disable-console
 # nuitka-project: --enable-plugin=pyside6               
-# nuitka-project: --output-dir=build
+# nuitka-project: --output-dir={MAIN_DIRECTORY}/build
 # nuitka-project: --product-name="Aviso Bot"                        
 # nuitka-project: --windows-icon-from-ico={MAIN_DIRECTORY}/windows/icon.ico
 # nuitka-project: --product-version=0.0.0.4   
