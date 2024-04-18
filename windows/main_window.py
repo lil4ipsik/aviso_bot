@@ -1,10 +1,11 @@
 # This Python file uses the following encoding: utf-8
 from os import getenv
-from os.path import exists
+from os.path import exists, join, dirname
 from threading import Event, Thread
 
 from PySide6.QtCore import QTimer
 from PySide6.QtWidgets import QMainWindow
+from PySide6.QtGui import QIcon
 from dotenv import load_dotenv
 
 from business import Bot
@@ -19,6 +20,8 @@ from ui.main_ui import Ui_MainWindow as MainUI
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
+        icon_path = join(dirname(__file__), 'icon.ico')
+        self.setWindowIcon(QIcon(icon_path))
         self.bot_thread = None
         self.ui = MainUI()
         self.ui.setupUi(self)
@@ -72,7 +75,7 @@ class MainWindow(QMainWindow):
     def on_setup_ui(self):
         if exists('.env'):
             load_dotenv('.env')
-            print('File exists')
+            # print('File exists')
             self.ui.login_edit.setText(getenv('login'))
             self.ui.password_edit.setText(getenv('password'))
 
