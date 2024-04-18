@@ -27,6 +27,9 @@ class Aviso:
         self.exit_event = exit_event
         self.ui = ui
         self.log_box = log_box
+    
+    def logtime(self):
+        return f'[{datetime.now().replace(microsecond=0)}]'
 
     def append_log(self, text):
         self.log_box.append(text)
@@ -38,11 +41,11 @@ class Aviso:
     def view_websites(self, driver):
         while self.exit_event.is_set():
             sleep(1)
-        self.append_log(f'<font color="">{datetime.now()} serf web</font>')
+        self.append_log(f'<font color="">{self.logtime()} Surf web</font>')
         driver.get("https://aviso.bz/work-serf")
         while self.exit_event.is_set():
             sleep(1)
-        self.append_log(f'<font color="">{datetime.now()} watch youtube</font>')
+        self.append_log(f'<font color="">{self.logtime()} Watch YouTube</font>')
 
         if driver.find_elements(By.CLASS_NAME, "form-control"):
             self.log_in(driver, self.ui.login_edit.text(), self.ui.password_edit.text())
@@ -65,7 +68,7 @@ class Aviso:
                     sleep(1.5)
                     i.find_element(By.CLASS_NAME, 'start-yes-serf').click()
                 except Exception as e:
-                    self.append_log(f'<font color="red">{datetime.now()} {e}</font>')
+                    self.append_log(f'<font color="red">{self.logtime()} {e}</font>')
                     error_count += 1
                     continue
 
@@ -85,14 +88,14 @@ class Aviso:
                     driver.switch_to.frame('frminfo')
                     driver.find_element(By.TAG_NAME, 'a').click()
                 except Exception as e:
-                    self.append_log(f'<font color="red">{datetime.now()} {e}</font>')
+                    self.append_log(f'<font color="red">{self.logtime()} {e}</font>')
                     error_count += 1
                     sleep(3)
                 else:
                     sleep(0.5)
                     self.total_earned_money += earned_money
                     self.total_earned_money += earned_money
-                    self.append_log(f'<font color="green">{datetime.now()} earned: '
+                    self.append_log(f'<font color="green">{self.logtime()} Earned: '
                                         f'{round(earned_money, 5)}, total: {round(self.total_earned_money, 5)}</font>')
                 for handle in driver.window_handles[1:]:
                     driver.switch_to.window(handle)
@@ -108,11 +111,11 @@ class Aviso:
     def watch_videos(self, driver):
         while self.exit_event.is_set():
             sleep(1)
-        self.append_log(f'<font color="">{datetime.now()} watch youtube</font>')
+        self.append_log(f'<font color="">{self.logtime()} Watch YouTube</font>')
 
         driver.get("https://aviso.bz/work-youtube")
         while _is_captcha_available(driver):
-            self.append_log(f'<font color="red">{datetime.now()} WARNING, COMPLETE THE CAPTCHA</font>')
+            self.append_log(f'<font color="red">{self.logtime()} WARNING, COMPLETE THE CAPTCHA</font>')
             sleep(1)
         wait = WebDriverWait(driver, 7)
         error_count = 0
@@ -138,7 +141,7 @@ class Aviso:
                     a.click()
                     sleep(1.5)
                 except Exception as e:
-                    self.append_log(f'<font color="red">{datetime.now()} {e}</font>')
+                    self.append_log(f'<font color="red">{self.logtime()} {e}</font>')
                     error_count += 1
                     continue
 
@@ -165,12 +168,12 @@ class Aviso:
                         sleep(5)
                         driver.switch_to.window(driver.window_handles[1])
                 except Exception as e:
-                    self.append_log(f'<font color="red">{datetime.now()} {e}</font>')
+                    self.append_log(f'<font color="red">{self.logtime()} {e}</font>')
                     error_count += 1
                     sleep(3)
                 else:
                     self.total_earned_money += earned_money
-                    self.append_log(f'<font color="green">{datetime.now()} earned: '
+                    self.append_log(f'<font color="green">{self.logtime()} Earned: '
                                         f'{round(earned_money, 5)}, total: {round(self.total_earned_money, 5)}</font>')
 
                 for handle in driver.window_handles[1:]:
@@ -185,18 +188,18 @@ class Aviso:
         return is_tasks_available
 
     def log_in(self, driver,  login, password):
-        self.append_log(f'<font color="">{datetime.now()} start log in</font>')
+        self.append_log(f'<font color="">{self.logtime()} Start log in</font>')
         driver.get(self.aviso_url)
 
         if exists("cookies"):
-            self.append_log(f'<font color="">{datetime.now()} cookies find</font>')
+            self.append_log(f'<font color="">{self.logtime()} Cookies found</font>')
             for cookie in pload(open("cookies", "rb")):
                 driver.add_cookie(cookie)
             driver.get(self.aviso_url)
             if 'Статус' in driver.page_source:
                 return
 
-        self.append_log(f'<font color="red">{datetime.now()} error with cookies. Manual og in</font>')
+        self.append_log(f'<font color="red">{self.logtime()} Error with cookies, manual log in.</font>')
         driver.find_element(By.CLASS_NAME, "button-login").click()
         sleep(3)
         driver.find_elements(By.CLASS_NAME, "form-control")[0].send_keys(login)
@@ -206,10 +209,10 @@ class Aviso:
         driver.find_element(By.ID, 'button-login').click()
         while "https://aviso.bz/login" in driver.current_url:
             if driver.find_elements(By.ID, 'anchor'):
-                self.append_log(f'<font color="red">{datetime.now()} COMPLETE THE CAPTCHA</font>')
+                self.append_log(f'<font color="red">{self.logtime()} COMPLETE THE CAPTCHA</font>')
             else:
-                self.append_log(f'<font color="orange">{datetime.now()} wait for log in</font>')
+                self.append_log(f'<font color="orange">{self.logtime()} Waiting for log in</font>')
             sleep(1)
 
         pdump(driver.get_cookies(), open("cookies", "wb"))
-        self.append_log(f'<font color="">{datetime.now()} finish log in</font>')
+        self.append_log(f'<font color="">{self.logtime()} Finished log in</font>')

@@ -14,12 +14,15 @@ class Bot:
         self.ui = ui
         self.aviso = Aviso(exit_event, ui, ui.log_box)
 
+    def logtime(self):
+        return f'[{datetime.now().replace(microsecond=0)}]'
+
     def append_log(self, text):
         self.ui.log_box.append(text)
 
     def run_bot(self, login, password, browser):
         self.is_running = True
-        self.append_log(f'<font color="green">{datetime.now()} using {browser}</font>')
+        self.append_log(f'<font color="green">{self.logtime()} Using {browser}</font>')
         if browser == 'Firefox':
             self.driver = Firefox().open_browser()
         elif browser == 'Chrome':
@@ -34,20 +37,20 @@ class Bot:
                     is_website_tasks_available = self.aviso.view_websites(self.driver)
                     continue
             except Exception as e:
-                self.append_log(f'<font color="red">{datetime.now()} {e}</font>')
+                self.append_log(f'<font color="red">{self.logtime()} {e}</font>')
                 continue
 
-            self.append_log(f'<font color="red">{datetime.now()} task isn`t available</font>')
+            self.append_log(f'<font color="red">{self.logtime()} Task isn`t available</font>')
             for i in range(3000)[::-1]:
                 if self.is_running:
-                    self.append_log(f'<font color="orange">sleep {i}</font>')
+                    self.append_log(f'<font color="orange">Waiting for {i}seconds</font>')
                     sleep(1)
                 else:
                     break
             is_video_tasks_available = True
             is_website_tasks_available = True
-        print('finish run_bot')
-        self.append_log(f'<font color="red">{datetime.now()} bot is stopped</font>')
+        # print('finish run_bot')
+        self.append_log(f'<font color="red">{self.logtime()} Bot stopped</font>')
         self.is_running = True
 
     def get_balance(self):
@@ -61,5 +64,5 @@ class Bot:
         try:
             self.aviso.log_in(self.driver, login, password)
         except Exception as e:
-            self.append_log(f'<font color="red">{datetime.now()} {e}</font>')
+            self.append_log(f'<font color="red">{self.logtime()} {e}</font>')
             self.stop()
