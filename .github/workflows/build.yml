@@ -2,8 +2,9 @@ jobs:
   build:
     runs-on: windows-latest
 
-    on: workflow_dispatch
-
+    on: 
+      workflow_dispatch:
+      
     steps:
       - name: Check-out repository
         uses: actions/checkout@v3
