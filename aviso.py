@@ -45,7 +45,6 @@ class Aviso:
         driver.get("https://aviso.bz/work-serf")
         while self.exit_event.is_set():
             sleep(1)
-        self.append_log(f'<font color="">{self.logtime()} Watch YouTube</font>')
 
         if driver.find_elements(By.CLASS_NAME, "form-control"):
             self.log_in(driver, self.ui.login_edit.text(), self.ui.password_edit.text())
