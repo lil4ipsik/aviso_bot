@@ -43,6 +43,9 @@ class MainWindow(QMainWindow):
             self.bot_state = 'running'
             self.exit_event.clear()
             self.ui.start_bot_button.setText('Pause')
+            self.ui.login_edit.setDisabled(True)
+            self.ui.password_edit.setDisabled(True)
+            self.ui.comboBox.setDisabled(True)
             self.selected_browser = self.ui.comboBox.currentText()
             self.bot_thread = Thread(target=self.bot.run_bot, args=(self.ui.login_edit.text(),
                                                                               self.ui.password_edit.text(), self.selected_browser))
@@ -63,6 +66,9 @@ class MainWindow(QMainWindow):
         self.ui.start_bot_button.setText('Run')
         self.ui.start_bot_button.setDisabled(True)
         self.ui.stop_bot_button.setDisabled(True)
+        self.ui.login_edit.setDisabled(False)
+        self.ui.password_edit.setDisabled(False)
+        self.ui.comboBox.setDisabled(False)
         self.bot_state = 'stop'
         Thread(target=self.bot.stop).start()
 
