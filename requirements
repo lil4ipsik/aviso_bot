@@ -2,3 +2,4 @@ selenium
 colorama
 python-dotenv
 pyside6==6.6.2
+requests
