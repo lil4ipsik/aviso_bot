@@ -76,8 +76,7 @@ def is_key_date_expired(key: str) -> bool:
         data = get_current_date()
         current_date = datetime(year=data['year'], month=data['month'], day=data['day'])
     except (ValueError, Exception):
-        print('error')
-        return True
+        return False
 
     if current_date < expire_date:
         return True
