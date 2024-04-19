@@ -1,4 +1,5 @@
 # This Python file uses the following encoding: utf-8
+from datetime import datetime
 from os import getenv
 from os.path import exists, join, dirname
 from threading import Event, Thread
@@ -8,7 +9,7 @@ from PySide6.QtWidgets import QMainWindow
 from PySide6.QtGui import QIcon
 from dotenv import load_dotenv
 
-from business import Bot
+from business import Bot, is_key_valid
 from ui.main_ui import Ui_MainWindow as MainUI
 
 
@@ -31,7 +32,6 @@ class MainWindow(QMainWindow):
         self.bot = Bot(self.exit_event, self.ui)
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.ui_update)
-        self.timer.start(1000)
         self.ui.start_bot_button.clicked.connect(self.start_bot_button_clicked)
         self.ui.stop_bot_button.clicked.connect(self.stop_bot_button_clicked)
         self.show()
@@ -39,16 +39,23 @@ class MainWindow(QMainWindow):
         bar.rangeChanged.connect(lambda: bar.setValue(bar.maximum()))
 
     def start_bot_button_clicked(self):
+        if not self.is_valid_product_key():
+            self.stop_bot_button_clicked()
+            return
+
         if self.bot_state == 'stop':
             self.bot_state = 'running'
             self.exit_event.clear()
+            self.timer.start(1000)
             self.ui.start_bot_button.setText('Pause')
             self.ui.login_edit.setDisabled(True)
+            self.ui.product_key_edit.setDisabled(True)
             self.ui.password_edit.setDisabled(True)
             self.ui.comboBox.setDisabled(True)
             self.selected_browser = self.ui.comboBox.currentText()
             self.bot_thread = Thread(target=self.bot.run_bot, args=(self.ui.login_edit.text(),
-                                                                              self.ui.password_edit.text(), self.selected_browser))
+                                                                    self.ui.password_edit.text(),
+                                                                    self.selected_browser))
             self.bot_thread.daemon = True
             self.bot_thread.start()
         elif self.bot_state == 'running':
@@ -61,12 +68,14 @@ class MainWindow(QMainWindow):
             self.ui.start_bot_button.setText('Pause')
 
     def stop_bot_button_clicked(self):
+        self.timer.stop()
         if not self.bot.driver:
             return
         self.ui.start_bot_button.setText('Run')
         self.ui.start_bot_button.setDisabled(True)
         self.ui.stop_bot_button.setDisabled(True)
         self.ui.login_edit.setDisabled(False)
+        self.ui.product_key_edit.setDisabled(False)
         self.ui.password_edit.setDisabled(False)
         self.ui.comboBox.setDisabled(False)
         self.bot_state = 'stop'
@@ -83,7 +92,18 @@ class MainWindow(QMainWindow):
             load_dotenv('.env')
             # print('File exists')
             self.ui.login_edit.setText(getenv('login'))
+            self.ui.product_key_edit.setText(getenv('key'))
             self.ui.password_edit.setText(getenv('password'))
+
+    def is_valid_product_key(self):
+        if is_key_valid(self.ui.login_edit.text(), self.ui.product_key_edit.text()):
+            return True
+        else:
+            self.ui.log_box.setText(f'<font color="green">{self.logtime()} Product key invalid</font>')
+            return False
+
+    def logtime(self):
+        return f'[{datetime.now().replace(microsecond=0)}]'
 
     def closeEvent(self, event):
         self.bot.stop()
