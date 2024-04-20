@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'main.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.7.0
+## Created by: Qt User Interface Compiler version 6.6.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -24,17 +24,18 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(400, 320)
+        MainWindow.setWindowModality(Qt.NonModal)
+        MainWindow.resize(400, 400)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
         MainWindow.setSizePolicy(sizePolicy)
-        MainWindow.setMinimumSize(QSize(400, 300))
-        MainWindow.setMaximumSize(QSize(16777215, 16777215))
+        MainWindow.setMinimumSize(QSize(400, 400))
+        MainWindow.setMaximumSize(QSize(400, 400))
         MainWindow.setWindowOpacity(1.000000000000000)
         MainWindow.setStyleSheet(u"background-color: #F5F5F5;")
-        MainWindow.setTabShape(QTabWidget.TabShape.Rounded)
+        MainWindow.setTabShape(QTabWidget.Rounded)
         self.verticalWidget = QWidget(MainWindow)
         self.verticalWidget.setObjectName(u"verticalWidget")
         sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
@@ -43,10 +44,10 @@ class Ui_MainWindow(object):
         sizePolicy1.setHeightForWidth(self.verticalWidget.sizePolicy().hasHeightForWidth())
         self.verticalWidget.setSizePolicy(sizePolicy1)
         self.verticalWidget.setMaximumSize(QSize(1000, 1000))
-        self.verticalWidget.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
+        self.verticalWidget.setLayoutDirection(Qt.LeftToRight)
         self.vboxLayout = QVBoxLayout(self.verticalWidget)
         self.vboxLayout.setObjectName(u"vboxLayout")
-        self.vboxLayout.setSizeConstraint(QLayout.SizeConstraint.SetDefaultConstraint)
+        self.vboxLayout.setSizeConstraint(QLayout.SetDefaultConstraint)
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
@@ -66,7 +67,6 @@ class Ui_MainWindow(object):
         self.earned_money_label.setMinimumSize(QSize(104, 0))
         self.earned_money_label.setMaximumSize(QSize(104, 16777215))
         self.earned_money_label.setFont(font)
-        self.earned_money_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.horizontalLayout.addWidget(self.earned_money_label)
 
@@ -76,13 +76,6 @@ class Ui_MainWindow(object):
 
 
         self.vboxLayout.addLayout(self.horizontalLayout)
-
-        self.status_label = QLabel(self.verticalWidget)
-        self.status_label.setObjectName(u"status_label")
-        self.status_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.status_label.setWordWrap(True)
-
-        self.vboxLayout.addWidget(self.status_label)
 
         self.horizontalWidget = QWidget(self.verticalWidget)
         self.horizontalWidget.setObjectName(u"horizontalWidget")
@@ -107,7 +100,7 @@ class Ui_MainWindow(object):
 
         self.password_edit = QLineEdit(self.horizontalWidget)
         self.password_edit.setObjectName(u"password_edit")
-        self.password_edit.setEchoMode(QLineEdit.EchoMode.Password)
+        self.password_edit.setEchoMode(QLineEdit.Password)
 
         self.horizontalLayout_3.addWidget(self.password_edit)
 
@@ -126,8 +119,26 @@ class Ui_MainWindow(object):
 
         self.product_key_edit = QLineEdit(self.horizontalWidget1)
         self.product_key_edit.setObjectName(u"product_key_edit")
+        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        sizePolicy2.setHorizontalStretch(1)
+        sizePolicy2.setVerticalStretch(0)
+        sizePolicy2.setHeightForWidth(self.product_key_edit.sizePolicy().hasHeightForWidth())
+        self.product_key_edit.setSizePolicy(sizePolicy2)
+        self.product_key_edit.setMinimumSize(QSize(0, 0))
+        self.product_key_edit.setMaximumSize(QSize(185, 16777215))
+        self.product_key_edit.setMaxLength(29)
+        self.product_key_edit.setAlignment(Qt.AlignCenter)
+        self.product_key_edit.setClearButtonEnabled(False)
 
         self.horizontalLayout_4.addWidget(self.product_key_edit)
+
+        self.vaild_label = QLabel(self.horizontalWidget1)
+        self.vaild_label.setObjectName(u"vaild_label")
+        self.vaild_label.setMinimumSize(QSize(120, 0))
+        self.vaild_label.setMaximumSize(QSize(120, 16777215))
+        self.vaild_label.setAlignment(Qt.AlignCenter)
+
+        self.horizontalLayout_4.addWidget(self.vaild_label)
 
 
         self.vboxLayout.addWidget(self.horizontalWidget1)
@@ -138,7 +149,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_6.setContentsMargins(10, 10, 10, 10)
         self.label_4 = QLabel(self.verticalWidget)
         self.label_4.setObjectName(u"label_4")
-        self.label_4.setMaximumSize(QSize(45, 16777215))
+        self.label_4.setMaximumSize(QSize(47, 16777215))
 
         self.horizontalLayout_6.addWidget(self.label_4)
 
@@ -149,19 +160,18 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_6.addWidget(self.comboBox)
 
+        self.verticalLayout = QVBoxLayout()
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.verticalLayout.setContentsMargins(10, -1, 10, -1)
         self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
-
-        self.horizontalLayout_2.addItem(self.horizontalSpacer_2)
-
         self.start_bot_button = QPushButton(self.verticalWidget)
         self.start_bot_button.setObjectName(u"start_bot_button")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
-        sizePolicy2.setHorizontalStretch(0)
-        sizePolicy2.setVerticalStretch(0)
-        sizePolicy2.setHeightForWidth(self.start_bot_button.sizePolicy().hasHeightForWidth())
-        self.start_bot_button.setSizePolicy(sizePolicy2)
+        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        sizePolicy3.setHorizontalStretch(0)
+        sizePolicy3.setVerticalStretch(0)
+        sizePolicy3.setHeightForWidth(self.start_bot_button.sizePolicy().hasHeightForWidth())
+        self.start_bot_button.setSizePolicy(sizePolicy3)
         self.start_bot_button.setMinimumSize(QSize(60, 30))
         self.start_bot_button.setMaximumSize(QSize(150, 30))
         self.start_bot_button.setStyleSheet(u"background-color: rgb(56, 169, 98);\n"
@@ -180,19 +190,25 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_2.addWidget(self.stop_bot_button)
 
-        self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
-        self.horizontalLayout_2.addItem(self.horizontalSpacer_3)
+        self.verticalLayout.addLayout(self.horizontalLayout_2)
+
+        self.status_label = QLabel(self.verticalWidget)
+        self.status_label.setObjectName(u"status_label")
+        self.status_label.setAlignment(Qt.AlignCenter)
+        self.status_label.setWordWrap(True)
+
+        self.verticalLayout.addWidget(self.status_label)
 
 
-        self.horizontalLayout_6.addLayout(self.horizontalLayout_2)
+        self.horizontalLayout_6.addLayout(self.verticalLayout)
 
 
         self.vboxLayout.addLayout(self.horizontalLayout_6)
 
         self.label_6 = QLabel(self.verticalWidget)
         self.label_6.setObjectName(u"label_6")
-        self.label_6.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.label_6.setAlignment(Qt.AlignCenter)
         self.label_6.setWordWrap(True)
 
         self.vboxLayout.addWidget(self.label_6)
@@ -218,24 +234,23 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"aviso.bz bot", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"Total earned:", None))
         self.earned_money_label.setText(QCoreApplication.translate("MainWindow", u"0", None))
-        self.status_label.setText("")
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"Login      ", None))
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"Password", None))
         self.label_5.setText(QCoreApplication.translate("MainWindow", u"Key", None))
+        self.product_key_edit.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Enter product key (or add it to .env)", None))
+        self.vaild_label.setText(QCoreApplication.translate("MainWindow", u"Valid until 0000-00-00", None))
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"Browser", None))
         self.comboBox.setItemText(0, QCoreApplication.translate("MainWindow", u"Firefox", None))
         self.comboBox.setItemText(1, QCoreApplication.translate("MainWindow", u"Chrome", None))
 
         self.start_bot_button.setText(QCoreApplication.translate("MainWindow", u"Run", None))
         self.stop_bot_button.setText(QCoreApplication.translate("MainWindow", u"Stop", None))
-        self.label_6.setText(QCoreApplication.translate("MainWindow", u"For request key you must write to systnager@gmail.com or @systnager in  telegram. You can request test key for test bot and buy key later", None))
+        self.status_label.setText(QCoreApplication.translate("MainWindow", u"Status: Idle", None))
+        self.label_6.setText(QCoreApplication.translate("MainWindow", u"Request a free testing key for 7 days on https://aviso.xserv.pp.ua", None))
         self.log_box.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
-"hr { height: 1px; border-width: 0; }\n"
-"li.unchecked::marker { content: \"\\2610\"; }\n"
-"li.checked::marker { content: \"\\2612\"; }\n"
-"</style></head><body style=\" font-family:'Segoe UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>", None))
+"</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Segoe UI'; font-size:9pt;\"><br /></p></body></html>", None))
     # retranslateUi
 

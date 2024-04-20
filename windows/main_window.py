@@ -9,9 +9,9 @@ from PySide6.QtWidgets import QMainWindow
 from PySide6.QtGui import QIcon
 from dotenv import load_dotenv
 
-from business import Bot, is_key_valid
+from business import Bot, is_key_valid, get_date_expire_from_code
 from ui.main_ui import Ui_MainWindow as MainUI
-
+from PySide6.QtWidgets import QMessageBox
 
 # Important:
 # You need to run the following command to generate the login_ui.py file
@@ -37,6 +37,19 @@ class MainWindow(QMainWindow):
         self.show()
         bar = self.ui.log_box.verticalScrollBar()
         bar.rangeChanged.connect(lambda: bar.setValue(bar.maximum()))
+        self.ui.product_key_edit.textChanged.connect(self.check_key)
+        self.ui.login_edit.textChanged.connect(self.check_key)
+
+    def check_key(self):
+        if len(self.ui.product_key_edit.text()) < 29:
+            self.ui.vaild_label.setText('Not enough symbols')
+
+        if len(self.ui.product_key_edit.text()) == 29:
+            if is_key_valid(self.ui.login_edit.text(), self.ui.product_key_edit.text()):
+                valid_date = get_date_expire_from_code(self.ui.product_key_edit.text())
+                self.ui.vaild_label.setText(f'Valid until {valid_date["year"]}-{valid_date["month"]}-{valid_date["day"]}')
+            else:
+                self.ui.vaild_label.setText('Invalid (idi nahui)')
 
     def start_bot_button_clicked(self):
         if not self.is_valid_product_key():
@@ -52,6 +65,7 @@ class MainWindow(QMainWindow):
             self.ui.product_key_edit.setDisabled(True)
             self.ui.password_edit.setDisabled(True)
             self.ui.comboBox.setDisabled(True)
+            self.ui.status_label.setText('Status: Running')
             self.selected_browser = self.ui.comboBox.currentText()
             self.bot_thread = Thread(target=self.bot.run_bot, args=(self.ui.login_edit.text(),
                                                                     self.ui.password_edit.text(),
@@ -60,10 +74,12 @@ class MainWindow(QMainWindow):
             self.bot_thread.start()
         elif self.bot_state == 'running':
             self.bot_state = 'pause'
+            self.ui.status_label.setText('Status: Paused')
             self.exit_event.set()
             self.ui.start_bot_button.setText('Resume')
         elif self.bot_state == 'pause':
             self.bot_state = 'running'
+            self.ui.status_label.setText('Status: Running')
             self.exit_event.clear()
             self.ui.start_bot_button.setText('Pause')
 
@@ -72,13 +88,14 @@ class MainWindow(QMainWindow):
         if not self.bot.driver:
             return
         self.ui.start_bot_button.setText('Run')
-        self.ui.start_bot_button.setDisabled(True)
+        self.ui.start_bot_button.setDisabled(False)
         self.ui.stop_bot_button.setDisabled(True)
         self.ui.login_edit.setDisabled(False)
         self.ui.product_key_edit.setDisabled(False)
         self.ui.password_edit.setDisabled(False)
         self.ui.comboBox.setDisabled(False)
         self.bot_state = 'stop'
+        self.ui.status_label.setText('Status: Stopped')
         Thread(target=self.bot.stop).start()
 
     def ui_update(self):
@@ -94,6 +111,7 @@ class MainWindow(QMainWindow):
             self.ui.login_edit.setText(getenv('login'))
             self.ui.product_key_edit.setText(getenv('key'))
             self.ui.password_edit.setText(getenv('password'))
+            self.check_key()
 
     def is_valid_product_key(self):
         if is_key_valid(self.ui.login_edit.text(), self.ui.product_key_edit.text()):
@@ -106,6 +124,12 @@ class MainWindow(QMainWindow):
         return f'[{datetime.now().replace(microsecond=0)}]'
 
     def closeEvent(self, event):
-        self.bot.stop()
-        self.timer.stop()
-        event.accept()
+        reply = QMessageBox.question(self, 'Exit', 'Are you sure you want to exit?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            event.accept()
+            self.exit_event.set()
+            if self.bot.driver is not None:
+                self.ui.log_box.append(f'{self.logtime()} Closing selenium processes...')
+                self.bot.driver.quit()
+        else:
+            event.ignore()

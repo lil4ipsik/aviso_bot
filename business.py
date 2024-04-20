@@ -54,19 +54,13 @@ def get_date_expire_from_code(code: str) -> dict:
         'day': day
     }
 
-
 def get_current_date() -> dict:
-    response = requests.get("http://worldclockapi.com/api/json/utc/now")
-    current_date_str = response.json()["currentDateTime"]
-    year = int(current_date_str[0:4])
-    month = int(current_date_str[5:7])
-    day = int(current_date_str[8:10])
+    now = datetime.now()
     return {
-        'year': year,
-        'month': month,
-        'day': day
-    }
-
+        'year': now.year,
+        'month': now.month,
+        'day': now.day
+        }
 
 def is_key_date_expired(key: str) -> bool:
     key = key.replace('-', '')
