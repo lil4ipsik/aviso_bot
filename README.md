@@ -4,6 +4,9 @@
 ![Static Badge](https://img.shields.io/badge/Linux-Not_tested-darkgray?logo=linux&logoColor=white)
 ![Static Badge](https://img.shields.io/badge/MacOS-Not_tested-darkgray?logo=apple)
 
+### Now you can request a free 7 days trial key here https://aviso.xserv.pp.ua  
+but you still need to contact systnager to buy a full access key!
+
 This is a test bot for automatic earnings on aviso.bz Here is a short instruction to manually run the bot:
 
 1. Download the latest [Python3](https://www.python.org/ftp/python/3.12.3/python-3.12.3-amd64.exe) interpreter and [Firefox](https://www.mozilla.org/en-US/firefox/new/) or [Chrome](https://chrome.com/)
