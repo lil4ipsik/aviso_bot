@@ -143,6 +143,26 @@ class Ui_MainWindow(object):
 
         self.vboxLayout.addWidget(self.horizontalWidget1)
 
+        self.horizontalWidget2 = QWidget(self.verticalWidget)
+        self.horizontalWidget2.setObjectName(u"horizontalWidget2")
+        self.horizontalWidget2.setMinimumSize(QSize(50, 50))
+        self.horizontalLayout_5 = QHBoxLayout(self.horizontalWidget2)
+        self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
+        self.label_7 = QLabel(self.horizontalWidget2)
+        self.label_7.setObjectName(u"label_7")
+
+        self.horizontalLayout_5.addWidget(self.label_7)
+
+        self.web_site_combo = QComboBox(self.horizontalWidget2)
+        self.web_site_combo.addItem("")
+        self.web_site_combo.addItem("")
+        self.web_site_combo.setObjectName(u"web_site_combo")
+
+        self.horizontalLayout_5.addWidget(self.web_site_combo)
+
+
+        self.vboxLayout.addWidget(self.horizontalWidget2)
+
         self.horizontalLayout_6 = QHBoxLayout()
         self.horizontalLayout_6.setSpacing(6)
         self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
@@ -231,7 +251,7 @@ class Ui_MainWindow(object):
     # setupUi
 
     def retranslateUi(self, MainWindow):
-        #MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"aviso.bz bot", None))
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"aviso.bz bot", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"Total earned:", None))
         self.earned_money_label.setText(QCoreApplication.translate("MainWindow", u"0", None))
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"Login      ", None))
@@ -239,6 +259,10 @@ class Ui_MainWindow(object):
         self.label_5.setText(QCoreApplication.translate("MainWindow", u"Key", None))
         self.product_key_edit.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Enter product key (or add it to .env)", None))
         self.vaild_label.setText(QCoreApplication.translate("MainWindow", u"Valid until 0000-00-00", None))
+        self.label_7.setText(QCoreApplication.translate("MainWindow", u"WebSite", None))
+        self.web_site_combo.setItemText(0, QCoreApplication.translate("MainWindow", u"Aviso", None))
+        self.web_site_combo.setItemText(1, QCoreApplication.translate("MainWindow", u"Profitcentr", None))
+
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"Browser", None))
         self.comboBox.setItemText(0, QCoreApplication.translate("MainWindow", u"Firefox", None))
         self.comboBox.setItemText(1, QCoreApplication.translate("MainWindow", u"Chrome", None))
@@ -248,9 +272,12 @@ class Ui_MainWindow(object):
         self.status_label.setText(QCoreApplication.translate("MainWindow", u"Status: Idle", None))
         self.label_6.setText(QCoreApplication.translate("MainWindow", u"Request a free testing key for 7 days on https://aviso.xserv.pp.ua", None))
         self.log_box.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Segoe UI'; font-size:9pt;\"><br /></p></body></html>", None))
+"hr { height: 1px; border-width: 0; }\n"
+"li.unchecked::marker { content: \"\\2610\"; }\n"
+"li.checked::marker { content: \"\\2612\"; }\n"
+"</style></head><body style=\" font-family:'Segoe UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>", None))
     # retranslateUi
 
