@@ -12,6 +12,7 @@ from dotenv import load_dotenv
 from business import Bot, is_key_valid, get_date_expire_from_code
 from ui.main_ui import Ui_MainWindow as MainUI
 from PySide6.QtWidgets import QMessageBox
+from version import version as app_version
 
 # Important:
 # You need to run the following command to generate the login_ui.py file
@@ -23,6 +24,8 @@ class MainWindow(QMainWindow):
         super().__init__(parent)
         icon_path = join(dirname(__file__), 'icon.ico')
         self.setWindowIcon(QIcon(icon_path))
+        self.version = app_version()
+        self.setWindowTitle(f'aviso.bz bot ({self.version} - Not activated)')
         self.bot_thread = None
         self.ui = MainUI()
         self.ui.setupUi(self)
@@ -43,13 +46,16 @@ class MainWindow(QMainWindow):
     def check_key(self):
         if len(self.ui.product_key_edit.text()) < 29:
             self.ui.vaild_label.setText('Not enough symbols')
+            self.setWindowTitle(f'aviso.bz bot ({self.version} - Not activated)')
 
         if len(self.ui.product_key_edit.text()) == 29:
             if is_key_valid(self.ui.login_edit.text(), self.ui.product_key_edit.text()):
                 valid_date = get_date_expire_from_code(self.ui.product_key_edit.text())
                 self.ui.vaild_label.setText(f'Valid until {valid_date["year"]}-{valid_date["month"]}-{valid_date["day"]}')
+                self.setWindowTitle(f'aviso.bz bot ({self.version} - Premium)')
             else:
                 self.ui.vaild_label.setText('Invalid (idi nahui)')
+                self.setWindowTitle(f'aviso.bz bot ({self.version} - Not activated)')
 
     def start_bot_button_clicked(self):
         if not self.is_valid_product_key():
