@@ -1,3 +1,4 @@
+import random
 import time
 from datetime import datetime
 from pickle import dump as pdump, load as pload
@@ -15,7 +16,8 @@ just_fix_windows_console()
 
 
 def _is_captcha_available(driver):
-    if len(driver.find_elements(By.ID, 'out-capcha')) != 0 or len(driver.find_elements(By.CLASS_NAME, 'out-capcha')) != 0:
+    if len(driver.find_elements(By.ID, 'out-capcha')) != 0 or len(
+            driver.find_elements(By.CLASS_NAME, 'out-capcha')) != 0:
         return True
     else:
         return False
@@ -40,6 +42,8 @@ class Profitcentr:
         return self.total_earned_money
 
     def view_websites(self, driver):
+        min_video_count = 10
+        max_video_count = 50
         while self.exit_event.is_set():
             sleep(1)
         self.append_log(f'<font color="">{self.logtime()} Surf web</font>')
@@ -63,8 +67,8 @@ class Profitcentr:
         print(website_list)
         is_tasks_available = True
         if len(website_list) > 0 and not ('Нет переходов доступных для просмотра, зайдите немного позже' in
-                                          driver.find_element(By.CLASS_NAME, "msg-error").text):
-            for i in website_list:
+                                          driver.page_source):
+            for i in website_list[:random.randint(min_video_count, max_video_count)]:
                 while self.exit_event.is_set():
                     sleep(1)
                 while _is_captcha_available(driver):
@@ -76,7 +80,8 @@ class Profitcentr:
                     a = i.find_element(By.TAG_NAME, "a")
                     price_span = i.find_element(By.XPATH, 'tbody/tr/td[3]/span[2]')
                     time_span = i.find_element(By.XPATH, "tbody/tr/td[2]/div[1]/a")
-                    print(price_span.get_attribute('innerHTML').split(' ')[0], time_span.get_attribute('onclick').replace("'", '').split(',')[2])
+                    print(price_span.get_attribute('innerHTML').split(' ')[0],
+                          time_span.get_attribute('onclick').replace("'", '').split(',')[2])
                     earned_money = float(price_span.get_attribute('innerHTML').split(' ')[0])
                     time_sleep = int(time_span.get_attribute('onclick').replace("'", '').split(',')[2]) + 5
                     a.click()
@@ -120,37 +125,63 @@ class Profitcentr:
         return is_tasks_available
 
     def watch_videos(self, driver):
+        min_video_count = 10
+        max_video_count = 50
         while self.exit_event.is_set():
             sleep(1)
-        self.append_log(f'<font color="">{self.logtime()} Watch YouTube</font>')
-
-        driver.get("https://aviso.bz/work-youtube")
-        while _is_captcha_available(driver):
-            self.append_log(f'<font color="red">{self.logtime()} WARNING, COMPLETE THE CAPTCHA</font>')
+        self.append_log(f'<font color="">{self.logtime()} Watch youtube</font>')
+        if driver.find_element(By.ID, 'mnu_tblock1').value_of_css_property("display") == "none":
+            print('display none')
+            driver.find_element(By.ID, 'mnu_title1').click()
+            time.sleep(3)
+        print('click to youtube videos link')
+        driver.find_element(By.ID, 'mnu_tblock1').find_elements(By.TAG_NAME, 'a')[5].click()
+        time.sleep(3)
+        print('exit event')
+        while self.exit_event.is_set():
             sleep(1)
+        print('captcha')
+        while _is_captcha_available(driver):
+            self.append_log(f'<font color="red">{self.logtime()} COMPLETE CAPTCHA</font>')
+            time.sleep(1)
+        time.sleep(5)
         wait = WebDriverWait(driver, 7)
         error_count = 0
         video_list = []
-        if driver.find_elements(By.CLASS_NAME, "form-control"):
-            self.log_in(driver, self.ui.login_edit.text(), self.ui.password_edit.text())
+        # if ('Нет видео доступных для просмотра, зайдите немного позже' in
+        #    driver.find_element(By.CLASS_NAME, "msg-error").text):
+        #     self.log_in(driver, self.ui.login_edit.text(), self.ui.password_edit.text())
+        #     return True
+        print('search video task')
         for task in driver.find_elements(By.CLASS_NAME, "work-serf"):
-            if 'Просмотр видеоролика' in task.text:
-                video_list.append(task)
+            video_list.append(task)
         is_tasks_available = True if video_list else False
-        if len(video_list) > 0:
-            for i in video_list:
+        print('if video list len > 0')
+        if len(video_list) > 0:  # and not ('Нет видео доступных для просмотра, зайдите немного позже' in
+            # driver.find_element(By.CLASS_NAME, "msg-error").text):
+            for i in video_list[:random.randint(min_video_count, max_video_count)]:
+                print('start watch video')
                 while self.exit_event.is_set():
                     sleep(1)
+                print('captcha')
+                while _is_captcha_available(driver):
+                    self.append_log(f'<font color="red">{self.logtime()} COMPLETE CAPTCHA</font>')
+                    time.sleep(1)
                 if error_count >= 3:
                     return False
                 try:
+                    print('try block')
                     a = i.find_element(By.TAG_NAME, "span")
+                    print('get a')
                     price_span = i.find_element(By.XPATH, "tbody/tr/td[3]/span[2]")
-                    time_span = i.find_element(By.XPATH, "tbody/tr/td[3]/div/span[1]")
-                    earned_money = float(price_span.get_attribute('innerHTML').split('<')[0])
-                    time_sleep = int(time_span.get_attribute('innerHTML').split()[0]) + 3
+                    print(price_span.text)
+                    earned_money = float(price_span.get_attribute('innerHTML'))
+                    print(earned_money)
                     a.click()
                     sleep(1.5)
+                    print('click to second button')
+                    a = i.find_element(By.TAG_NAME, "span")
+                    a.click()
                 except Exception as e:
                     self.append_log(f'<font color="red">{self.logtime()} {e}</font>')
                     error_count += 1
@@ -168,16 +199,25 @@ class Profitcentr:
 
                 driver.switch_to.window(driver.window_handles[1])
                 try:
+                    print('in second try block')
+                    time_sleep = int(wait.until(ec.presence_of_element_located((By.ID, 'tmr'))).text) + 5
+                    print('switch to frame')
                     driver.switch_to.frame(wait.until(ec.presence_of_element_located((By.ID, 'video-start'))))
+                    print('wait start video button')
                     wait.until(ec.presence_of_element_located((By.ID, 'movie_player'))).click()
+                    print('sleep')
                     sleep(time_sleep)
-                    driver.switch_to.window(driver.window_handles[0])
-                    if not ('С учетом рефбека на ваш счет начислено' in i.text):
-                        driver.switch_to.window(driver.window_handles[1])
-                        driver.switch_to.frame(wait.until(ec.presence_of_element_located((By.ID, 'video-start'))))
-                        wait.until(ec.presence_of_element_located((By.ID, 'movie_player'))).click()
-                        sleep(5)
-                        driver.switch_to.window(driver.window_handles[1])
+                    print('switch to second tab')
+                    driver.switch_to.window(driver.window_handles[1])
+                    print('click to second button')
+                    driver.find_element(By.CLASS_NAME, 'butt-nw').click()
+                    time.sleep(3)
+                    # if not ('С учетом рефбека на ваш счет начислено' in i.text):
+                    #     driver.switch_to.window(driver.window_handles[1])
+                    #     driver.switch_to.frame(wait.until(ec.presence_of_element_located((By.ID, 'video-start'))))
+                    #     wait.until(ec.presence_of_element_located((By.ID, 'movie_player'))).click()
+                    #     sleep(5)
+                    #     driver.switch_to.window(driver.window_handles[1])
                 except Exception as e:
                     self.append_log(f'<font color="red">{self.logtime()} {e}</font>')
                     error_count += 1
@@ -192,7 +232,7 @@ class Profitcentr:
                     driver.close()
 
                 driver.switch_to.window(driver.window_handles[0])
-                sleep(1)
+                sleep(random.randint(1, 7))
         else:
             is_tasks_available = False
 
@@ -221,5 +261,6 @@ class Profitcentr:
                 self.append_log(f'<font color="orange">{self.logtime()} Waiting for log in</font>')
             sleep(1)
 
+        time.sleep(10)
         pdump(driver.get_cookies(), open("profitcentr_cookies", "wb"))
         self.append_log(f'<font color="">{self.logtime()} Finished log in</font>')
