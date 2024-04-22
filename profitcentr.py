@@ -42,12 +42,13 @@ class Profitcentr:
         return self.total_earned_money
 
     def view_websites(self, driver):
-        min_video_count = 10
-        max_video_count = 50
+        min_video_count = 50
+        max_video_count = 100
+        wait = WebDriverWait(driver, 7)
         while self.exit_event.is_set():
             sleep(1)
         self.append_log(f'<font color="">{self.logtime()} Surf web</font>')
-        if driver.find_element(By.ID, 'mnu_tblock1').value_of_css_property("display") == "none":
+        if wait.until(ec.presence_of_element_located((By.ID, 'mnu_tblock1'))).value_of_css_property("display") == "none":
             driver.find_element(By.ID, 'mnu_title1').click()
             time.sleep(3)
         driver.find_element(By.ID, 'mnu_tblock1').find_elements(By.TAG_NAME, 'a')[1].click()
@@ -125,12 +126,13 @@ class Profitcentr:
         return is_tasks_available
 
     def watch_videos(self, driver):
-        min_video_count = 10
-        max_video_count = 50
+        min_video_count = 50
+        max_video_count = 100
+        wait = WebDriverWait(driver, 7)
         while self.exit_event.is_set():
             sleep(1)
         self.append_log(f'<font color="">{self.logtime()} Watch youtube</font>')
-        if driver.find_element(By.ID, 'mnu_tblock1').value_of_css_property("display") == "none":
+        if wait.until(ec.presence_of_element_located((By.ID, 'mnu_tblock1'))).value_of_css_property("display") == "none":
             print('display none')
             driver.find_element(By.ID, 'mnu_title1').click()
             time.sleep(3)
@@ -145,7 +147,6 @@ class Profitcentr:
             self.append_log(f'<font color="red">{self.logtime()} COMPLETE CAPTCHA</font>')
             time.sleep(1)
         time.sleep(5)
-        wait = WebDriverWait(driver, 7)
         error_count = 0
         video_list = []
         # if ('Нет видео доступных для просмотра, зайдите немного позже' in
@@ -242,12 +243,12 @@ class Profitcentr:
         self.append_log(f'<font color="">{self.logtime()} Start log in</font>')
         driver.get(f'{self.profitcentr_url}login')
 
-        if False: #exists("profitcentr_cookies"):
+        if exists(f"profitcentr_{login}_cookies"):
             self.append_log(f'<font color="">{self.logtime()} Cookies found</font>')
-            for cookie in pload(open("cookies", "rb")):
+            for cookie in pload(open(f"profitcentr_{login}_cookies", "rb")):
                 driver.add_cookie(cookie)
             driver.get(self.profitcentr_url)
-            if 'Статус' in driver.page_source:
+            if 'Основной счет' in driver.page_source:
                 return
 
         self.append_log(f'<font color="red">{self.logtime()} Error with cookies, manual log in.</font>')
@@ -262,5 +263,5 @@ class Profitcentr:
             sleep(1)
 
         time.sleep(10)
-        pdump(driver.get_cookies(), open("profitcentr_cookies", "wb"))
+        pdump(driver.get_cookies(), open(f"profitcentr_{login}_cookies", "wb"))
         self.append_log(f'<font color="">{self.logtime()} Finished log in</font>')
