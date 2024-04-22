@@ -62,8 +62,8 @@ class Profitcentr:
         website_list = driver.find_elements(By.CLASS_NAME, "work-serf")
         print(website_list)
         is_tasks_available = True
-        #TODO: add check is page has some text
-        if len(website_list) > 0:  # and not ('Нет переходов доступных для просмотра, зайдите немного позже' in driver.page_source):
+        if len(website_list) > 0 and not ('Нет переходов доступных для просмотра, зайдите немного позже' in
+                                          driver.find_element(By.CLASS_NAME, "msg-error").text):
             for i in website_list:
                 while self.exit_event.is_set():
                     sleep(1)
