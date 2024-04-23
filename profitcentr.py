@@ -128,6 +128,7 @@ class Profitcentr:
     def watch_videos(self, driver):
         min_video_count = 50
         max_video_count = 100
+        current_video_count = random.randint(min_video_count, max_video_count)
         wait = WebDriverWait(driver, 7)
         while self.exit_event.is_set():
             sleep(1)
@@ -148,94 +149,104 @@ class Profitcentr:
             time.sleep(1)
         time.sleep(5)
         error_count = 0
-        video_list = []
+        video_list = driver.find_elements(By.CLASS_NAME, "work-serf")
         # if ('Нет видео доступных для просмотра, зайдите немного позже' in
         #    driver.find_element(By.CLASS_NAME, "msg-error").text):
         #     self.log_in(driver, self.ui.login_edit.text(), self.ui.password_edit.text())
         #     return True
         print('search video task')
-        for task in driver.find_elements(By.CLASS_NAME, "work-serf"):
-            video_list.append(task)
         is_tasks_available = True if video_list else False
         print('if video list len > 0')
-        if len(video_list) > 0:  # and not ('Нет видео доступных для просмотра, зайдите немного позже' in
-            # driver.find_element(By.CLASS_NAME, "msg-error").text):
-            for i in video_list[:random.randint(min_video_count, max_video_count)]:
-                print('start watch video')
-                while self.exit_event.is_set():
-                    sleep(1)
-                print('captcha')
-                while _is_captcha_available(driver):
-                    self.append_log(f'<font color="red">{self.logtime()} COMPLETE CAPTCHA</font>')
-                    time.sleep(1)
-                if error_count >= 3:
-                    return False
+        # driver.find_element(By.CLASS_NAME, "msg-error").text)::
+        for _ in range(current_video_count):
+            if len(video_list) == 0:
+                print(video_list)
                 try:
-                    print('try block')
-                    a = i.find_element(By.TAG_NAME, "span")
-                    print('get a')
-                    price_span = i.find_element(By.XPATH, "tbody/tr/td[3]/span[2]")
-                    print(price_span.text)
-                    earned_money = float(price_span.get_attribute('innerHTML'))
-                    print(earned_money)
-                    a.click()
-                    sleep(1.5)
-                    print('click to second button')
-                    a = i.find_element(By.TAG_NAME, "span")
-                    a.click()
+                    while True:
+                        driver.find_element(By.ID, 'load-pages').click()
+                        time.sleep(5)
+                        video_list = driver.find_elements(By.CLASS_NAME, "work-serf")
+                        if len(video_list) >= current_video_count - _:
+                            break
                 except Exception as e:
                     self.append_log(f'<font color="red">{self.logtime()} {e}</font>')
-                    error_count += 1
-                    continue
+                    break
 
-                for j in range(5):
-                    if len(driver.window_handles) < 2:
-                        sleep(1)
-                        continue
-                    else:
-                        break
+            print('start watch video')
+            while self.exit_event.is_set():
+                sleep(1)
+            print('captcha')
+            while _is_captcha_available(driver):
+                self.append_log(f'<font color="red">{self.logtime()} COMPLETE CAPTCHA</font>')
+                time.sleep(1)
+            if error_count >= 15:
+                return False
+            try:
+                print('try block')
+                a = video_list[0].find_element(By.TAG_NAME, "span")
+                print('get a')
+                price_span = video_list[0].find_element(By.XPATH, "tbody/tr/td[3]/span[2]")
+                print(price_span.text)
+                earned_money = float(price_span.get_attribute('innerHTML'))
+                print(earned_money)
+                a.click()
+                sleep(1.5)
+                print('click to second button')
+                a = video_list[0].find_element(By.TAG_NAME, "span")
+                video_list.pop(0)
+                a.click()
+            except Exception as e:
+                self.append_log(f'<font color="red">{self.logtime()} {e}</font>')
+                error_count += 1
+                video_list.pop(0)
+                continue
 
+            for j in range(5):
                 if len(driver.window_handles) < 2:
+                    sleep(1)
                     continue
-
-                driver.switch_to.window(driver.window_handles[1])
-                try:
-                    print('in second try block')
-                    time_sleep = int(wait.until(ec.presence_of_element_located((By.ID, 'tmr'))).text) + 5
-                    print('switch to frame')
-                    driver.switch_to.frame(wait.until(ec.presence_of_element_located((By.ID, 'video-start'))))
-                    print('wait start video button')
-                    wait.until(ec.presence_of_element_located((By.ID, 'movie_player'))).click()
-                    print('sleep')
-                    sleep(time_sleep)
-                    print('switch to second tab')
-                    driver.switch_to.window(driver.window_handles[1])
-                    print('click to second button')
-                    driver.find_element(By.CLASS_NAME, 'butt-nw').click()
-                    time.sleep(3)
-                    # if not ('С учетом рефбека на ваш счет начислено' in i.text):
-                    #     driver.switch_to.window(driver.window_handles[1])
-                    #     driver.switch_to.frame(wait.until(ec.presence_of_element_located((By.ID, 'video-start'))))
-                    #     wait.until(ec.presence_of_element_located((By.ID, 'movie_player'))).click()
-                    #     sleep(5)
-                    #     driver.switch_to.window(driver.window_handles[1])
-                except Exception as e:
-                    self.append_log(f'<font color="red">{self.logtime()} {e}</font>')
-                    error_count += 1
-                    sleep(3)
                 else:
-                    self.total_earned_money += earned_money
-                    self.append_log(f'<font color="green">{self.logtime()} Earned: '
-                                    f'{round(earned_money, 5)}, total: {round(self.total_earned_money, 5)}</font>')
+                    break
 
-                for handle in driver.window_handles[1:]:
-                    driver.switch_to.window(handle)
-                    driver.close()
+            if len(driver.window_handles) < 2:
+                continue
 
-                driver.switch_to.window(driver.window_handles[0])
-                sleep(random.randint(1, 7))
-        else:
-            is_tasks_available = False
+            driver.switch_to.window(driver.window_handles[1])
+            try:
+                print('in second try block')
+                time_sleep = int(wait.until(ec.presence_of_element_located((By.ID, 'tmr'))).text) + 5
+                print('switch to frame')
+                driver.switch_to.frame(wait.until(ec.presence_of_element_located((By.ID, 'video-start'))))
+                print('wait start video button')
+                wait.until(ec.presence_of_element_located((By.ID, 'movie_player'))).click()
+                print('sleep')
+                sleep(time_sleep)
+                print('switch to second tab')
+                driver.switch_to.window(driver.window_handles[1])
+                print('click to second button')
+                driver.find_element(By.CLASS_NAME, 'butt-nw').click()
+                time.sleep(3)
+                # if not ('С учетом рефбека на ваш счет начислено' in i.text):
+                #     driver.switch_to.window(driver.window_handles[1])
+                #     driver.switch_to.frame(wait.until(ec.presence_of_element_located((By.ID, 'video-start'))))
+                #     wait.until(ec.presence_of_element_located((By.ID, 'movie_player'))).click()
+                #     sleep(5)
+                #     driver.switch_to.window(driver.window_handles[1])
+            except Exception as e:
+                self.append_log(f'<font color="red">{self.logtime()} {e}</font>')
+                error_count += 1
+                sleep(3)
+            else:
+                self.total_earned_money += earned_money
+                self.append_log(f'<font color="green">{self.logtime()} Earned: '
+                                f'{round(earned_money, 5)}, total: {round(self.total_earned_money, 5)}</font>')
+
+            for handle in driver.window_handles[1:]:
+                driver.switch_to.window(handle)
+                driver.close()
+
+            driver.switch_to.window(driver.window_handles[0])
+            sleep(random.randint(1, 7))
 
         return is_tasks_available
 
@@ -252,6 +263,7 @@ class Profitcentr:
                 return
 
         self.append_log(f'<font color="red">{self.logtime()} Error with cookies, manual log in.</font>')
+        driver.get(f'{self.profitcentr_url}login')
         driver.find_elements(By.CLASS_NAME, "login_vh")[0].send_keys(login)
         sleep(1)
         driver.find_elements(By.CLASS_NAME, "login_vh")[1].send_keys(password)
