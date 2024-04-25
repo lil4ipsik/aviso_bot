@@ -126,7 +126,7 @@ class Profitcentr:
         return is_tasks_available
 
     def watch_videos(self, driver):
-        min_video_count = 50
+        min_video_count = 75
         max_video_count = 100
         current_video_count = random.randint(min_video_count, max_video_count)
         wait = WebDriverWait(driver, 7)
@@ -161,16 +161,16 @@ class Profitcentr:
         for _ in range(current_video_count):
             if len(video_list) == 0:
                 print(video_list)
-                try:
-                    while True:
+                while True:
+                    try:
                         driver.find_element(By.ID, 'load-pages').click()
                         time.sleep(5)
                         video_list = driver.find_elements(By.CLASS_NAME, "work-serf")
                         if len(video_list) >= current_video_count - _:
                             break
-                except Exception as e:
-                    self.append_log(f'<font color="red">{self.logtime()} {e}</font>')
-                    break
+                    except Exception as e:
+                        self.append_log(f'<font color="red">{self.logtime()} {e}</font>')
+                        break
 
             print('start watch video')
             while self.exit_event.is_set():
