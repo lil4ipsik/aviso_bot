@@ -2,6 +2,7 @@ import hashlib
 import random
 from datetime import datetime
 from time import sleep
+from pickle import dump as pdump
 
 from aviso import Aviso
 from browser import Firefox, Chrome
@@ -105,6 +106,7 @@ class Bot:
         self.driver = None
         self.is_running = True
         self.ui = ui
+        self.login = None
         self.aviso = Aviso(exit_event, ui, ui.log_box)
         self.profitcentr = Profitcentr(exit_event, ui, ui.log_box)
         self.current_bot = self.aviso
@@ -121,6 +123,7 @@ class Bot:
         self.ui.log_box.append(text)
 
     def run_bot(self, login, password, browser):
+        self.login = login
         if self.ui.web_site_combo.currentIndex() == -1:
             self.append_log(f'<font color="orange">{self.logtime()} Choice web site</font>')
             return
@@ -156,7 +159,7 @@ class Bot:
                         else:
                             break
                     is_website_tasks_available = self.current_bot.view_websites(self.driver)
-                    for i in range(random.randint(500, 3600))[::-1]:
+                    for i in range(random.randint(500, 1500))[::-1]:
                         if self.is_running:
                             self.append_log(f'<font color="orange">Waiting for {i}seconds</font>')
                             sleep(1)
@@ -177,9 +180,13 @@ class Bot:
             return
 
     def get_balance(self):
-        return self.aviso.get_balance()
+        return self.aviso.get_balance() + self.profitcentr.get_balance()
 
     def stop(self):
+        if self.login:
+            pdump(self.driver.get_cookies(),
+                  open(f"{self.ui.web_site_combo.currentText().lower()}_{self.login}_cookies", "wb"))
+            self.login = None
         self.is_running = False
         self.driver.quit()
 

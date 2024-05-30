@@ -190,9 +190,9 @@ class Aviso:
         self.append_log(f'<font color="">{self.logtime()} Start log in</font>')
         driver.get(self.aviso_url)
 
-        if exists("cookies"):
+        if exists(f"aviso_{login}_cookies"):
             self.append_log(f'<font color="">{self.logtime()} Cookies found</font>')
-            for cookie in pload(open("cookies", "rb")):
+            for cookie in pload(open(f"aviso_{login}_cookies", "rb")):
                 driver.add_cookie(cookie)
             driver.get(self.aviso_url)
             if 'Статус' in driver.page_source:
@@ -213,5 +213,5 @@ class Aviso:
                 self.append_log(f'<font color="orange">{self.logtime()} Waiting for log in</font>')
             sleep(1)
 
-        pdump(driver.get_cookies(), open("cookies", "wb"))
+        pdump(driver.get_cookies(), open(f"aviso_{login}_cookies", "wb"))
         self.append_log(f'<font color="">{self.logtime()} Finished log in</font>')
