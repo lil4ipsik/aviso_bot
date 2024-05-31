@@ -4,14 +4,14 @@ from os import getenv
 from os.path import exists, join, dirname
 from threading import Event, Thread
 
-from PySide6.QtCore import QTimer
-from PySide6.QtWidgets import QMainWindow
-from PySide6.QtGui import QIcon
+from PyQt6.QtCore import QTimer
+from PyQt6.QtWidgets import QMainWindow
+from PyQt6.QtGui import QIcon
 from dotenv import load_dotenv
 
 from business import Bot, is_key_valid, get_date_expire_from_code
 from ui.main_ui import Ui_MainWindow as MainUI
-from PySide6.QtWidgets import QMessageBox
+from PyQt6.QtWidgets import QMessageBox
 from version import version as app_version
 
 # Important:
@@ -130,8 +130,8 @@ class MainWindow(QMainWindow):
         return f'[{datetime.now().replace(microsecond=0)}]'
 
     def closeEvent(self, event):
-        reply = QMessageBox.question(self, 'Exit', 'Are you sure you want to exit?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-        if reply == QMessageBox.Yes:
+        reply = QMessageBox.question(self, 'Exit', 'Are you sure you want to exit?', QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No, QMessageBox.StandardButton.No)
+        if reply == QMessageBox.StandardButton.Yes:
             event.accept()
             self.exit_event.set()
             if self.bot.driver is not None:
