@@ -1,13 +1,3 @@
-# -*- coding: utf-8 -*-
-
-################################################################################
-## Form generated from reading UI file 'main.ui'
-##
-## Created by: Qt User Interface Compiler version 6.6.2
-##
-## WARNING! All changes made in this file will be lost when recompiling UI file!
-################################################################################
-
 from PyQt6.QtWidgets import QHBoxLayout, QLabel, QLineEdit, QPushButton, QComboBox, QVBoxLayout, QWidget, QTextEdit
 
 from PyQt6.QtCore import Qt
@@ -38,6 +28,7 @@ class Ui_MainWindow(object):
         self.key_layout.addWidget(self.product_key_label)
         self.product_key_edit = QLineEdit()
         self.key_layout.addWidget(self.product_key_edit)
+        self.product_key_edit.setMaxLength(29)
         self.vaild_label = QLabel('Not activated')
         self.key_layout.addWidget(self.vaild_label)
 
@@ -60,6 +51,7 @@ class Ui_MainWindow(object):
         self.button_layout.addWidget(self.start_bot_button)
         self.stop_bot_button = QPushButton('Stop')
         self.button_layout.addWidget(self.stop_bot_button)
+        self.stop_bot_button.setEnabled(False)
         self.status_label = QLabel('Status: Stopped')
         self.button_layout.addWidget(self.status_label)
 
@@ -81,7 +73,6 @@ class Ui_MainWindow(object):
         self.log_box = QTextEdit()
         self.log_box.setReadOnly(True)
         
-
         self.layout = QVBoxLayout()
         self.layout.addLayout(self.credentials_layout)
         self.layout.addLayout(self.trial_layout)
