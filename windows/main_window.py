@@ -9,7 +9,8 @@ from PyQt6.QtWidgets import QMainWindow
 from PyQt6.QtGui import QIcon
 from dotenv import load_dotenv
 
-from business import Bot, is_key_valid, get_date_expire_from_code
+from business import is_key_valid, get_date_expire_from_code
+from bot import Bot
 from ui.main_ui import Ui_MainWindow as MainUI
 from PyQt6.QtWidgets import QMessageBox
 from version import version as app_version
