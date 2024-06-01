@@ -4,20 +4,15 @@ from os import getenv
 from os.path import exists, join, dirname
 from threading import Event, Thread
 
-from PySide6.QtCore import QTimer
-from PySide6.QtWidgets import QMainWindow
-from PySide6.QtGui import QIcon
+from PyQt6.QtCore import QTimer
+from PyQt6.QtWidgets import QMainWindow
+from PyQt6.QtGui import QIcon
 from dotenv import load_dotenv
 
-from business import Bot, is_key_valid, get_date_expire_from_code
+from business import Bot, is_key_valid
 from ui.main_ui import Ui_MainWindow as MainUI
-from PySide6.QtWidgets import QMessageBox
+from PyQt6.QtWidgets import QMessageBox
 from version import version as app_version
-
-# Important:
-# You need to run the following command to generate the login_ui.py file
-#     pyside6-uic ./res/ui/main.ui -o ./ui/main_ui.py.
-
 
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
@@ -28,6 +23,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle(f'aviso.bz bot ({self.version} - Not activated)')
         self.bot_thread = None
         self.ui = MainUI()
+        self.key_data = (False, None)
         self.ui.setupUi(self)
         self.on_setup_ui()
         self.bot_state = 'stop'
@@ -49,17 +45,22 @@ class MainWindow(QMainWindow):
             self.setWindowTitle(f'aviso.bz bot ({self.version} - Not activated)')
 
         if len(self.ui.product_key_edit.text()) == 29:
-            if is_key_valid(self.ui.login_edit.text(), self.ui.product_key_edit.text()):
-                valid_date = get_date_expire_from_code(self.ui.product_key_edit.text())
-                self.ui.vaild_label.setText(f'Valid until {valid_date["year"]}-{valid_date["month"]}-{valid_date["day"]}')
+            self.key_data = is_key_valid(self.ui.login_edit.text(), self.ui.product_key_edit.text())
+            if self.key_data[0]:
+                self.ui.vaild_label.setText(f'Valid to {self.key_data[1]}')
                 self.setWindowTitle(f'aviso.bz bot ({self.version} - Premium)')
             else:
                 self.ui.vaild_label.setText('Invalid (idi nahui)')
                 self.setWindowTitle(f'aviso.bz bot ({self.version} - Not activated)')
 
     def start_bot_button_clicked(self):
-        if not self.is_valid_product_key():
-            self.stop_bot_button_clicked()
+
+        if not self.ui.login_edit.text() or not self.ui.product_key_edit.text() or not self.ui.password_edit.text():
+            QMessageBox.warning(self, 'Error', 'Please fill in all fields.')
+            return
+        
+        if not self.key_data[0]:
+            QMessageBox.warning(self, 'Error', 'Invalid key.')
             return
 
         if self.bot_state == 'stop':
@@ -71,6 +72,8 @@ class MainWindow(QMainWindow):
             self.ui.product_key_edit.setDisabled(True)
             self.ui.password_edit.setDisabled(True)
             self.ui.comboBox.setDisabled(True)
+            self.ui.web_site_combo.setDisabled(True)
+            self.ui.stop_bot_button.setEnabled(True)
             self.ui.status_label.setText('Status: Running')
             self.selected_browser = self.ui.comboBox.currentText()
             self.bot_thread = Thread(target=self.bot.run_bot, args=(self.ui.login_edit.text(),
@@ -119,19 +122,12 @@ class MainWindow(QMainWindow):
             self.ui.password_edit.setText(getenv('password'))
             self.check_key()
 
-    def is_valid_product_key(self):
-        if is_key_valid(self.ui.login_edit.text(), self.ui.product_key_edit.text()):
-            return True
-        else:
-            self.ui.log_box.setText(f'<font color="green">{self.logtime()} Product key invalid</font>')
-            return False
-
     def logtime(self):
         return f'[{datetime.now().replace(microsecond=0)}]'
 
     def closeEvent(self, event):
-        reply = QMessageBox.question(self, 'Exit', 'Are you sure you want to exit?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-        if reply == QMessageBox.Yes:
+        reply = QMessageBox.question(self, 'Exit', 'Are you sure you want to exit?', QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No, QMessageBox.StandardButton.No)
+        if reply == QMessageBox.StandardButton.Yes:
             event.accept()
             self.exit_event.set()
             if self.bot.driver is not None:
