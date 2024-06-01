@@ -14,7 +14,7 @@ def is_key_valid(username, key):
     if key is None:
         return False, None
 
-    url = "http://127.0.0.1:5000/api/is-key-valid"
+    url = "https://aviso.xserv.pp.ua/api/is-key-valid"
     data = {
         "username": username,
         "activationCode": key
