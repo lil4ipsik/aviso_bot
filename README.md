@@ -1,8 +1,8 @@
 ![Aviso Bot](https://cdn.xserv.pp.ua/images/aviso/githubaviso.png)
 ![Static Badge](https://img.shields.io/badge/Windows_10--11-Compatible-darkgreen?logo=windows)
 ![Static Badge](https://img.shields.io/badge/Windows_7--8.1-Not_compatible-darkred?logo=windowsxp)
-![Static Badge](https://img.shields.io/badge/Linux-Not_tested-darkgray?logo=linux&logoColor=white)
-![Static Badge](https://img.shields.io/badge/MacOS-Not_tested-darkgray?logo=apple)
+![Static Badge](https://img.shields.io/badge/Linux-Partially-yellow?logo=linux&logoColor=white)
+![Static Badge](https://img.shields.io/badge/MacOS-Partially_(No_fonts)-yellow?logo=apple)
 
 ### Now you can request a free 7 days trial key here https://aviso.xserv.pp.ua  
 but you still need to contact systnager to buy a full access key!
