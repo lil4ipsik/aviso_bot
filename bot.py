@@ -1,55 +1,57 @@
 import random
 from pickle import dump as pdump
+from PyQt6.QtCore import QThread
 
 from aviso import Aviso
 from browser import Firefox, Chrome
+from business import logtime
 from profitcentr import Profitcentr
-from datetime import datetime
 import time
 
 
-class Bot:
-    def __init__(self, exit_event, ui):
+class Bot(QThread):
+    def __init__(self, exit_event, ui, login, password):
+        super().__init__()
         self.driver = None
         self.is_running = True
+        self.exit_event = exit_event
         self.ui = ui
-        self.login = None
-        self.aviso = Aviso(exit_event, ui, ui.log_box)
-        self.profitcentr = Profitcentr(exit_event, ui, ui.log_box)
-        self.current_bot = self.aviso
-
-        self.bot_dict = {
-            'Aviso': self.aviso,
-            'Profitcentr': self.profitcentr
-        }
-
-    def logtime(self):
-        return f'[{datetime.now().replace(microsecond=0)}]'
+        self.login = login
+        self.password = password
+        self.current_bot = None
 
     def append_log(self, text):
         self.ui.log_box.append(text)
 
-    def run_bot(self, login, password, browser):
-        self.login = login
+    def run(self):
         if self.ui.web_site_combo.currentIndex() == -1:
-            self.append_log(f'<font color="orange">{self.logtime()} Choice web site</font>')
+            self.append_log(f'<font color="orange">{logtime()} Choice web site</font>')
             return
-        self.current_bot = self.bot_dict[self.ui.web_site_combo.currentText()]
-        while self.is_running:
-            self.append_log(f'<font color="green">{self.logtime()} Using {browser}</font>')
-            if browser == 'Firefox':
+        self.append_log(f'<font color="green">{logtime()} Using {self.ui.comboBox.currentText()}</font>')
+        try:
+            if self.ui.comboBox.currentText() == 'Firefox':
                 self.driver = Firefox().open_browser()
-            elif browser == 'Chrome':
+            elif self.ui.comboBox.currentText() == 'Chrome':
                 self.driver = Chrome().open_browser()
-            self._login(login, password)
+
+            if self.ui.web_site_combo.currentText() == 'Aviso':
+                self.current_bot = Aviso(self.exit_event, self.ui, self.ui.log_box, self.driver, self.login,
+                                         self.password)
+            else:
+                self.current_bot = Profitcentr(self.exit_event, self.ui, self.ui.log_box, self.driver, self.login,
+                                               self.password)
+            self._login()
+        except Exception as e:
+            self.append_log(f'<font color="red">{logtime()} {e}</font>')
+            return
+        while self.is_running:
             try:
                 self.earn_on_bot()
             except Exception as e:
-                self.append_log(f'<font color="red">{self.logtime()} {e}</font>')
+                self.append_log(f'<font color="red">{logtime()} {e}</font>')
                 continue
 
-        # print('finish run_bot')
-        self.append_log(f'<font color="red">{self.logtime()} Bot stopped</font>')
+        self.append_log(f'<font color="red">{logtime()} Bot stopped</font>')
         self.is_running = True
 
     def earn_on_bot(self):
@@ -74,7 +76,7 @@ class Bot:
                             break
                     continue
             except Exception as e:
-                self.append_log(f'<font color="red">{self.logtime()} {e}</font>')
+                self.append_log(f'<font color="red">{logtime()} {e}</font>')
                 for i in range(random.randint(60, 300))[::-1]:
                     if self.is_running:
                         self.append_log(f'<font color="orange">Waiting for {i}seconds</font>')
@@ -83,23 +85,23 @@ class Bot:
                         break
                 continue
 
-            self.append_log(f'<font color="red">{self.logtime()} Task isn`t available</font>')
+            self.append_log(f'<font color="red">{logtime()} Task isn`t available</font>')
             return
 
     def get_balance(self):
-        return self.aviso.get_balance() + self.profitcentr.get_balance()
+        return self.current_bot.get_balance() if self.current_bot else 0
 
     def stop(self):
         if self.login:
             pdump(self.driver.get_cookies(),
                   open(f"{self.ui.web_site_combo.currentText().lower()}_{self.login}_cookies", "wb"))
-            self.login = None
         self.is_running = False
         self.driver.quit()
+        self.terminate()
 
-    def _login(self, login, password):
+    def _login(self):
         try:
-            self.current_bot.log_in(self.driver, login, password)
+            self.current_bot.log_in()
         except Exception as e:
-            self.append_log(f'<font color="red">{self.logtime()} {e}</font>')
+            self.append_log(f'<font color="red">{logtime()} {e}</font>')
             self.stop()

@@ -21,12 +21,15 @@ def _is_captcha_available(driver):
 
 
 class Aviso:
-    def __init__(self, exit_event, ui,log_box):
+    def __init__(self, exit_event, ui,log_box, driver, login, password):
         self.aviso_url = "https://aviso.bz/"
         self.total_earned_money = 0
         self.exit_event = exit_event
         self.ui = ui
         self.log_box = log_box
+        self.driver = driver
+        self.login = login
+        self.password = password
     
     def logtime(self):
         return f'[{datetime.now().replace(microsecond=0)}]'
@@ -47,7 +50,7 @@ class Aviso:
             sleep(1)
 
         if driver.find_elements(By.CLASS_NAME, "form-control"):
-            self.log_in(driver, self.ui.login_edit.text(), self.ui.password_edit.text())
+            self.log_in()
         error_count = 0
         website_list = driver.find_elements(By.CLASS_NAME, "work-serf")
         is_tasks_available = True
@@ -120,7 +123,7 @@ class Aviso:
         error_count = 0
         video_list = []
         if driver.find_elements(By.CLASS_NAME, "form-control"):
-            self.log_in(driver, self.ui.login_edit.text(), self.ui.password_edit.text())
+            self.log_in()
         for task in driver.find_elements(By.CLASS_NAME, "work-serf"):
             if 'Просмотр видеоролика' in task.text:
                 video_list.append(task)
@@ -186,32 +189,32 @@ class Aviso:
 
         return is_tasks_available
 
-    def log_in(self, driver,  login, password):
+    def log_in(self):
         self.append_log(f'<font color="">{self.logtime()} Start log in</font>')
-        driver.get(self.aviso_url)
+        self.driver.get(self.aviso_url)
 
-        if exists(f"aviso_{login}_cookies"):
+        if exists(f"aviso_{self.login}_cookies"):
             self.append_log(f'<font color="">{self.logtime()} Cookies found</font>')
-            for cookie in pload(open(f"aviso_{login}_cookies", "rb")):
-                driver.add_cookie(cookie)
-            driver.get(self.aviso_url)
-            if 'Статус' in driver.page_source:
+            for cookie in pload(open(f"aviso_{self.login}_cookies", "rb")):
+                self.driver.add_cookie(cookie)
+            self.driver.get(self.aviso_url)
+            if 'Статус' in self.driver.page_source:
                 return
 
         self.append_log(f'<font color="red">{self.logtime()} Error with cookies, manual log in.</font>')
-        driver.find_element(By.CLASS_NAME, "button-login").click()
+        self.driver.find_element(By.CLASS_NAME, "button-login").click()
         sleep(3)
-        driver.find_elements(By.CLASS_NAME, "form-control")[0].send_keys(login)
+        self.driver.find_elements(By.CLASS_NAME, "form-control")[0].send_keys(self.login)
         sleep(1)
-        driver.find_elements(By.CLASS_NAME, "form-control")[1].send_keys(password)
+        self.driver.find_elements(By.CLASS_NAME, "form-control")[1].send_keys(self.password)
         sleep(1)
-        driver.find_element(By.ID, 'button-login').click()
-        while "https://aviso.bz/login" in driver.current_url:
-            if driver.find_elements(By.ID, 'anchor'):
+        self.driver.find_element(By.ID, 'button-login').click()
+        while "https://aviso.bz/login" in self.driver.current_url:
+            if self.driver.find_elements(By.ID, 'anchor'):
                 self.append_log(f'<font color="red">{self.logtime()} COMPLETE THE CAPTCHA</font>')
             else:
                 self.append_log(f'<font color="orange">{self.logtime()} Waiting for log in</font>')
             sleep(1)
 
-        pdump(driver.get_cookies(), open(f"aviso_{login}_cookies", "wb"))
+        pdump(self.driver.get_cookies(), open(f"aviso_{self.login}_cookies", "wb"))
         self.append_log(f'<font color="">{self.logtime()} Finished log in</font>')

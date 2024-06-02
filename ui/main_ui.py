@@ -67,7 +67,7 @@ class Ui_MainWindow(object):
         self.site_layout.addWidget(self.site_label)
         self.web_site_combo = QComboBox()
         self.web_site_combo.addItem('Aviso')
-        self.web_site_combo.addItem('Proficentr')
+        self.web_site_combo.addItem('Profitcentr')
         self.site_layout.addWidget(self.web_site_combo)
 
         self.log_box = QTextEdit()
