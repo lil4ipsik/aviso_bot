@@ -142,29 +142,32 @@ class Profitcentr(WebBot):
         is_tasks_available = True if video_list else False
         for _ in range(current_video_count):
             if len(video_list) == 0:
-                print(video_list)
                 for i in range(15):
                     try:
-                        self.append_log(f'<font color="red">{logtime()} {i + 1} try get more videos</font>')
+                        self.append_log(f'<font color="yellow">{logtime()} {i + 1} try get more videos of 15</font>')
                         self.wait_while_paused()
                         wait.until(ec.presence_of_element_located((By.ID, 'load-pages'))).click()
                         time.sleep(1)
                         # driver.find_element(By.ID, 'load-pages').click()
-                        video_list = driver.find_elements(By.CLASS_NAME, "work-serf")
+                        for task in driver.find_elements(By.CLASS_NAME, "work-serf"):
+                            if not ('Готово, Вам на счет зачислено' in task.text):
+                                video_list.append(task)
                         if len(video_list) != 0:
                             break
                     except Exception as e:
-                        self.append_log(f'<font color="red">{logtime()} {e}</font>')
+                        self.append_log(f'<font color="red">{logtime()} {e}</font>\nRefresh is normal')
                         driver.refresh()
                         
             if len(video_list) == 0:
-                return False
+                is_tasks_available = False
+                break
             self.wait_while_paused()
             while _is_captcha_available(driver):
                 self.append_log(f'<font color="red">{logtime()} COMPLETE CAPTCHA</font>')
                 time.sleep(1)
             if error_count >= 15:
-                return False
+                is_tasks_available = False
+                break
             try:
                 self.wait_while_paused()
                 video_list[0].find_element(By.TAG_NAME, "span").click()
