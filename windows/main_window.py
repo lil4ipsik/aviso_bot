@@ -134,10 +134,10 @@ class MainWindow(QMainWindow):
     def closeEvent(self, event):
         reply = QMessageBox.question(self, 'Exit', 'Are you sure you want to exit?', QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No, QMessageBox.StandardButton.No)
         if reply == QMessageBox.StandardButton.Yes:
-            event.accept()
             self.exit_event.set()
             if self.bot.driver is not None:
                 self.ui.log_box.append(f'{self.logtime()} Closing selenium processes...')
                 self.bot.driver.quit()
+            event.accept()
         else:
             event.ignore()
