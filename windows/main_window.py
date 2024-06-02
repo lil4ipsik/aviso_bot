@@ -28,9 +28,7 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
         self.on_setup_ui()
         self.bot_state = 'stop'
-        self.exit_event = Event()
-        self.bot = Bot(self.exit_event,
-                       self.ui,
+        self.bot = Bot(self.ui,
                        self.ui.login_edit.text(),
                        self.ui.password_edit.text()
                        )
@@ -70,7 +68,6 @@ class MainWindow(QMainWindow):
 
         if self.bot_state == 'stop':
             self.bot_state = 'running'
-            self.exit_event.clear()
             self.timer.start(1000)
             self.ui.start_bot_button.setText('Pause')
             self.ui.login_edit.setDisabled(True)
@@ -87,12 +84,12 @@ class MainWindow(QMainWindow):
         elif self.bot_state == 'running':
             self.bot_state = 'pause'
             self.ui.status_label.setText('Status: Paused')
-            self.exit_event.set()
+            self.bot.pause()
             self.ui.start_bot_button.setText('Resume')
         elif self.bot_state == 'pause':
             self.bot_state = 'running'
             self.ui.status_label.setText('Status: Running')
-            self.exit_event.clear()
+            self.bot.resume()
             self.ui.start_bot_button.setText('Pause')
 
     def stop_bot_button_clicked(self):
@@ -110,6 +107,7 @@ class MainWindow(QMainWindow):
         self.ui.product_key_edit.setDisabled(False)
         self.ui.password_edit.setDisabled(False)
         self.ui.comboBox.setDisabled(False)
+        self.ui.web_site_combo.setDisabled(False)
         self.bot_state = 'stop'
         self.ui.status_label.setText('Status: Stopped')
 
@@ -133,7 +131,6 @@ class MainWindow(QMainWindow):
                                      QMessageBox.StandardButton.No)
         if reply == QMessageBox.StandardButton.Yes:
             event.accept()
-            self.exit_event.set()
             if self.bot.driver is not None:
                 self.ui.log_box.append(f'{logtime()} Closing selenium processes...')
                 self.bot.driver.quit()

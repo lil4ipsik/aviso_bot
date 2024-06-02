@@ -10,11 +10,10 @@ import time
 
 
 class Bot(QThread):
-    def __init__(self, exit_event, ui, login, password):
+    def __init__(self, ui, login, password):
         super().__init__()
         self.driver = None
         self.is_running = True
-        self.exit_event = exit_event
         self.ui = ui
         self.login = login
         self.password = password
@@ -35,10 +34,10 @@ class Bot(QThread):
                 self.driver = Chrome().open_browser()
 
             if self.ui.web_site_combo.currentText() == 'Aviso':
-                self.current_bot = Aviso(self.exit_event, self.ui, self.ui.log_box, self.driver, self.login,
+                self.current_bot = Aviso(self.ui, self.ui.log_box, self.driver, self.login,
                                          self.password)
             else:
-                self.current_bot = Profitcentr(self.exit_event, self.ui, self.ui.log_box, self.driver, self.login,
+                self.current_bot = Profitcentr(self.ui, self.ui.log_box, self.driver, self.login,
                                                self.password)
             self._login()
         except Exception as e:
@@ -98,6 +97,14 @@ class Bot(QThread):
         self.is_running = False
         self.driver.quit()
         self.terminate()
+
+    def pause(self):
+        if self.current_bot:
+            self.current_bot.pause()
+
+    def resume(self):
+        if self.current_bot:
+            self.current_bot.resume()
 
     def _login(self):
         try:
