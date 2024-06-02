@@ -29,6 +29,7 @@ class Ui_MainWindow(object):
         self.product_key_edit = QLineEdit()
         self.key_layout.addWidget(self.product_key_edit)
         self.product_key_edit.setMaxLength(29)
+        self.product_key_edit.setPlaceholderText('XXXXXX-XXXXXX-XXXXXX-XXXXXX-XXXXXX')
         self.vaild_label = QLabel('Not activated')
         self.key_layout.addWidget(self.vaild_label)
 
