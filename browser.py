@@ -10,6 +10,8 @@ class Firefox:
         self.options.set_preference('intl.accept_languages', 'ru')
         self.options.set_preference("dom.webdriver.enabled", False)
         self.options.set_preference('useAutomationExtension', False)
+        self.options.set_preference("network.protocol-handler.external.tg", False)
+        self.options.set_preference("network.protocol-handler.external.zoommtg", False)
 
     def open_browser(self):
         driver = webdriver.Firefox(options=self.options)
@@ -30,6 +32,14 @@ class Chrome:
         self.options.add_argument("--disable-notifications")
         self.options.add_argument("--disable-popup-blocking")
         self.options.add_argument("--mute-audio")
+        self.options.add_experimental_option("prefs", {
+            "protocol_handler": {
+                "excluded_schemes": {
+                    "tg": True,
+                    "zoommtg": True
+                }
+            }
+        })
 
     def open_browser(self):
         driver = webdriver.Chrome(options=self.options)

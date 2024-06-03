@@ -11,8 +11,13 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
 
+from business import logtime
+from web_bot import WebBot
+
 load_dotenv()
 just_fix_windows_console()
+
+PROFITCENTR_URL = "https://profitcentr.com/"
 
 
 def _is_captcha_available(driver):
@@ -23,40 +28,29 @@ def _is_captcha_available(driver):
         return False
 
 
-class Profitcentr:
-    def __init__(self, exit_event, ui, log_box):
-        self.profitcentr_url = "https://profitcentr.com/"
-        self.total_earned_money = 0
-        self.exit_event = exit_event
-        self.ui = ui
-        self.log_box = log_box
-
-    def logtime(self):
-        return f'[{datetime.now().replace(microsecond=0)}]'
-
-    def append_log(self, text):
-        self.log_box.append(text)
-        self.log_box.verticalScrollBar().setValue(self.log_box.verticalScrollBar().maximum())
+class Profitcentr(WebBot):
+    def __int__(self):
+        pass
 
     def get_balance(self):
         return self.total_earned_money
 
     def view_websites(self, driver):
+        self.append_log(f'<font color="">{logtime()} Surf web</font>')
         min_video_count = 50
         max_video_count = 100
         wait = WebDriverWait(driver, 7)
-        while self.exit_event.is_set():
-            sleep(1)
-        self.append_log(f'<font color="">{self.logtime()} Surf web</font>')
+        self.wait_while_paused()
         if wait.until(ec.presence_of_element_located((By.ID, 'mnu_tblock1'))).value_of_css_property("display") == "none":
+            self.wait_while_paused()
             driver.find_element(By.ID, 'mnu_title1').click()
             time.sleep(3)
+        self.wait_while_paused()
         driver.find_element(By.ID, 'mnu_tblock1').find_elements(By.TAG_NAME, 'a')[1].click()
         time.sleep(3)
-        while self.exit_event.is_set():
-            sleep(1)
+        self.wait_while_paused()
         while _is_captcha_available(driver):
-            self.append_log(f'<font color="red">{self.logtime()} COMPLETE CAPTCHA</font>')
+            self.append_log(f'<font color="red">{logtime()} COMPLETE CAPTCHA</font>')
             time.sleep(1)
 
         # if 'Посещение сайтов' in driver.page_source:
@@ -70,10 +64,9 @@ class Profitcentr:
         if len(website_list) > 0 and not ('Нет переходов доступных для просмотра, зайдите немного позже' in
                                           driver.page_source):
             for i in website_list[:random.randint(min_video_count, max_video_count)]:
-                while self.exit_event.is_set():
-                    sleep(1)
+                self.wait_while_paused()
                 while _is_captcha_available(driver):
-                    self.append_log(f'<font color="red">{self.logtime()} COMPLETE CAPTCHA</font>')
+                    self.append_log(f'<font color="red">{logtime()} COMPLETE CAPTCHA</font>')
                     time.sleep(1)
                 if error_count >= 3:
                     return False
@@ -85,14 +78,16 @@ class Profitcentr:
                           time_span.get_attribute('onclick').replace("'", '').split(',')[2])
                     earned_money = float(price_span.get_attribute('innerHTML').split(' ')[0])
                     time_sleep = int(time_span.get_attribute('onclick').replace("'", '').split(',')[2]) + 5
+                    self.wait_while_paused()
                     a.click()
                     sleep(1.5)
                 except Exception as e:
-                    self.append_log(f'<font color="red">{self.logtime()} {e}</font>')
+                    self.append_log(f'<font color="red">{logtime()} {e}</font>')
                     error_count += 1
                     continue
 
                 for j in range(5):
+                    self.wait_while_paused()
                     if len(driver.window_handles) < 2:
                         sleep(1)
                         continue
@@ -106,13 +101,13 @@ class Profitcentr:
                     driver.switch_to.window(driver.window_handles[1])
                     sleep(time_sleep)
                 except Exception as e:
-                    self.append_log(f'<font color="red">{self.logtime()} {e}</font>')
+                    self.append_log(f'<font color="red">{logtime()} {e}</font>')
                     error_count += 1
                     sleep(3)
                 else:
                     sleep(0.5)
                     self.total_earned_money += earned_money
-                    self.append_log(f'<font color="green">{self.logtime()} Earned: '
+                    self.append_log(f'<font color="green">{logtime()} Earned: '
                                     f'{round(earned_money, 5)}, total: {round(self.total_earned_money, 5)}</font>')
                 for handle in driver.window_handles[1:]:
                     driver.switch_to.window(handle)
@@ -126,22 +121,20 @@ class Profitcentr:
         return is_tasks_available
 
     def watch_videos(self, driver):
+        self.append_log(f'<font color="">{logtime()} Watch youtube</font>')
         min_video_count = 75
         max_video_count = 100
         current_video_count = random.randint(min_video_count, max_video_count)
         wait = WebDriverWait(driver, 7)
-        while self.exit_event.is_set():
-            sleep(1)
-        self.append_log(f'<font color="">{self.logtime()} Watch youtube</font>')
+        self.wait_while_paused()
         if wait.until(ec.presence_of_element_located((By.ID, 'mnu_tblock1'))).value_of_css_property("display") == "none":
             driver.find_element(By.ID, 'mnu_title1').click()
             time.sleep(3)
         driver.find_element(By.ID, 'mnu_tblock1').find_elements(By.TAG_NAME, 'a')[5].click()
         time.sleep(3)
-        while self.exit_event.is_set():
-            sleep(1)
+        self.wait_while_paused()
         while _is_captcha_available(driver):
-            self.append_log(f'<font color="red">{self.logtime()} COMPLETE CAPTCHA</font>')
+            self.append_log(f'<font color="red">{logtime()} COMPLETE CAPTCHA</font>')
             time.sleep(1)
         time.sleep(5)
         error_count = 0
@@ -149,36 +142,41 @@ class Profitcentr:
         is_tasks_available = True if video_list else False
         for _ in range(current_video_count):
             if len(video_list) == 0:
-                print(video_list)
                 for i in range(15):
                     try:
-                        self.append_log(f'<font color="red">{self.logtime()} {i} try get more videos</font>')
+                        self.append_log(f'<font color="yellow">{logtime()} {i + 1} try get more videos of 15</font>')
+                        self.wait_while_paused()
                         wait.until(ec.presence_of_element_located((By.ID, 'load-pages'))).click()
                         time.sleep(1)
                         # driver.find_element(By.ID, 'load-pages').click()
-                        video_list = driver.find_elements(By.CLASS_NAME, "work-serf")
+                        for task in driver.find_elements(By.CLASS_NAME, "work-serf"):
+                            if not ('Готово, Вам на счет зачислено' in task.text):
+                                video_list.append(task)
                         if len(video_list) != 0:
                             break
                     except Exception as e:
-                        self.append_log(f'<font color="red">{self.logtime()} {e}</font>')
+                        self.append_log(f'<font color="red">{logtime()} {e}</font>\nRefresh is normal')
                         driver.refresh()
                         
             if len(video_list) == 0:
-                return False
-            while self.exit_event.is_set():
-                sleep(1)
+                is_tasks_available = False
+                break
+            self.wait_while_paused()
             while _is_captcha_available(driver):
-                self.append_log(f'<font color="red">{self.logtime()} COMPLETE CAPTCHA</font>')
+                self.append_log(f'<font color="red">{logtime()} COMPLETE CAPTCHA</font>')
                 time.sleep(1)
             if error_count >= 15:
-                return False
+                is_tasks_available = False
+                break
             try:
+                self.wait_while_paused()
                 video_list[0].find_element(By.TAG_NAME, "span").click()
                 sleep(3)
+                self.wait_while_paused()
                 video_list[0].find_element(By.TAG_NAME, "span").click()
                 video_list.pop(0)
             except Exception as e:
-                self.append_log(f'<font color="red">{self.logtime()} {e}</font>')
+                self.append_log(f'<font color="red">{logtime()} {e}</font>')
                 error_count += 1
                 video_list.pop(0)
                 continue
@@ -197,21 +195,23 @@ class Profitcentr:
             try:
                 time_sleep = int(wait.until(ec.presence_of_element_located((By.ID, 'tmr'))).text) + 5
                 driver.switch_to.frame(wait.until(ec.presence_of_element_located((By.ID, 'video-start'))))
+                self.wait_while_paused()
                 wait.until(ec.presence_of_element_located((By.ID, 'movie_player'))).click()
                 sleep(time_sleep)
                 driver.switch_to.window(driver.window_handles[1])
+                self.wait_while_paused()
                 driver.find_element(By.CLASS_NAME, 'butt-nw').click()
                 time.sleep(3)
                 earned_money = float(wait.until(ec.presence_of_element_located((By.XPATH, '/html/body/table/tbody/tr[1]'
                                                                                           '/td/table/tbody/tr[2]/td/'
                                                                                           'span/b'))).text)
             except Exception as e:
-                self.append_log(f'<font color="red">{self.logtime()} {e}</font>')
+                self.append_log(f'<font color="red">{logtime()} {e}</font>')
                 error_count += 1
                 sleep(3)
             else:
                 self.total_earned_money += earned_money
-                self.append_log(f'<font color="green">{self.logtime()} Earned: '
+                self.append_log(f'<font color="green">{logtime()} Earned: '
                                 f'{round(earned_money, 5)}, total: {round(self.total_earned_money, 5)}</font>')
 
             for handle in driver.window_handles[1:]:
@@ -223,30 +223,35 @@ class Profitcentr:
 
         return is_tasks_available
 
-    def log_in(self, driver, login, password):
-        self.append_log(f'<font color="">{self.logtime()} Start log in</font>')
-        driver.get(f'{self.profitcentr_url}login')
+    def log_in(self):
+        self.append_log(f'<font color="">{logtime()} Start log in</font>')
+        self.wait_while_paused()
+        self.driver.get(f'{PROFITCENTR_URL}login')
 
-        if exists(f"profitcentr_{login}_cookies"):
-            self.append_log(f'<font color="">{self.logtime()} Cookies found</font>')
-            for cookie in pload(open(f"profitcentr_{login}_cookies", "rb")):
-                driver.add_cookie(cookie)
-            driver.get(self.profitcentr_url)
-            if 'Основной счет' in driver.page_source:
+        if exists(f"profitcentr_{self.login}_cookies"):
+            self.append_log(f'<font color="">{logtime()} Cookies found</font>')
+            for cookie in pload(open(f"profitcentr_{self.login}_cookies", "rb")):
+                self.driver.add_cookie(cookie)
+            self.wait_while_paused()
+            self.driver.get(PROFITCENTR_URL)
+            if 'Основной счет' in self.driver.page_source:
                 return
 
-        self.append_log(f'<font color="red">{self.logtime()} Error with cookies, manual log in.</font>')
-        driver.get(f'{self.profitcentr_url}login')
-        driver.find_elements(By.CLASS_NAME, "login_vh")[0].send_keys(login)
-        sleep(1)
-        driver.find_elements(By.CLASS_NAME, "login_vh")[1].send_keys(password)
-        while f'{self.profitcentr_url}login' in driver.current_url:
-            if driver.find_elements(By.CLASS_NAME, 'out-capcha'):
-                self.append_log(f'<font color="red">{self.logtime()} COMPLETE THE CAPTCHA</font>')
+        self.append_log(f'<font color="red">{logtime()} Error with cookies, manual log in.</font>')
+        self.wait_while_paused()
+        self.driver.get(f'{PROFITCENTR_URL}login')
+        self.wait_while_paused()
+        self.driver.find_elements(By.CLASS_NAME, "login_vh")[0].send_keys(self.login)
+        time.sleep(1)
+        self.driver.find_elements(By.CLASS_NAME, "login_vh")[1].send_keys(self.password)
+        self.wait_while_paused()
+        while f'{PROFITCENTR_URL}login' in self.driver.current_url:
+            if self.driver.find_elements(By.CLASS_NAME, 'out-capcha'):
+                self.append_log(f'<font color="red">{logtime()} COMPLETE THE CAPTCHA</font>')
             else:
-                self.append_log(f'<font color="orange">{self.logtime()} Waiting for log in</font>')
-            sleep(1)
+                self.append_log(f'<font color="orange">{logtime()} Waiting for log in</font>')
+            time.sleep(1)
 
         time.sleep(10)
-        pdump(driver.get_cookies(), open(f"profitcentr_{login}_cookies", "wb"))
-        self.append_log(f'<font color="">{self.logtime()} Finished log in</font>')
+        pdump(self.driver.get_cookies(), open(f"profitcentr_{self.login}_cookies", "wb"))
+        self.append_log(f'<font color="">{logtime()} Finished log in</font>')
