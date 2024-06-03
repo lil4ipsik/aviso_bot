@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QHBoxLayout, QLabel, QLineEdit, QPushButton, QComboBox, QVBoxLayout, QWidget, QTextEdit
+from PyQt6.QtWidgets import QHBoxLayout, QLabel, QLineEdit, QPushButton, QComboBox, QVBoxLayout, QWidget, QTextEdit, QToolBar
 
 from PyQt6.QtCore import Qt
 
@@ -7,36 +7,34 @@ class Ui_MainWindow(object):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
 
-        MainWindow.setFixedSize(410, 400)
-
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
-        
-        self.credentials_layout = QHBoxLayout()
-        self.login_label = QLabel('Login:')
-        self.credentials_layout.addWidget(self.login_label)
-        self.login_edit = QLineEdit()
-        self.credentials_layout.addWidget(self.login_edit)
-        self.password_label = QLabel('Password:')
-        self.credentials_layout.addWidget(self.password_label)
-        self.password_edit = QLineEdit()
-        self.password_edit.setEchoMode(QLineEdit.EchoMode.Password)
-        self.credentials_layout.addWidget(self.password_edit)
 
-        self.key_layout = QHBoxLayout()
-        self.product_key_label = QLabel('Product key:')
-        self.key_layout.addWidget(self.product_key_label)
-        self.product_key_edit = QLineEdit()
-        self.key_layout.addWidget(self.product_key_edit)
-        self.product_key_edit.setMaxLength(29)
-        self.product_key_edit.setPlaceholderText('XXXXX-XXXXX-XXXXX-XXXXX-XXXXX')
-        self.product_key_edit.setToolTip('Enter your product key here')
-        self.product_key_edit.setAlignment(Qt.AlignmentFlag.AlignHCenter)
-        self.vaild_label = QLabel('Not activated')
-        self.key_layout.addWidget(self.vaild_label)
+        self.toolbar = QToolBar("Toolbar")
+        self.toolbar.setMovable(False)
+        MainWindow.addToolBar(self.toolbar)
+
+        self.credentials_layout = QHBoxLayout()
+        self.credentials_layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        self.userlist_label = QLabel('User:')
+        self.credentials_layout.addWidget(self.userlist_label)
+        self.userlist_combo = QComboBox()
+        self.credentials_layout.addWidget(self.userlist_combo)
+        self.refresh_button = QPushButton('↻')
+        self.refresh_button.setFixedWidth(30)
+        self.refresh_button.setToolTip('Refresh user list')
+        self.credentials_layout.addWidget(self.refresh_button)
+        self.validity_label = QLabel('Choose a user')
+        self.credentials_layout.addWidget(self.validity_label)
+
+        self.users_layout = QVBoxLayout()
+        self.users_layout.addLayout(self.credentials_layout)
 
         self.trial_layout = QVBoxLayout()
-        self.trial_layout.addLayout(self.key_layout)
+        self.add_user_hint = QLabel('To add a new user, click the "Add" button in the settings')
+        self.add_user_hint.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+        self.trial_layout.addWidget(self.add_user_hint)
+
         self.trial_label = QLabel('You can obtain a trial key by following the link: https://aviso.xserv.pp.ua/')
         self.trial_label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         self.trial_layout.addWidget(self.trial_label)
@@ -44,13 +42,14 @@ class Ui_MainWindow(object):
         self.browser_layout = QHBoxLayout()
         self.browser_label = QLabel('Browser:')
         self.browser_layout.addWidget(self.browser_label)
-        self.comboBox = QComboBox()
-        self.comboBox.addItem('Chrome')
-        self.comboBox.addItem('Firefox')
-        self.browser_layout.addWidget(self.comboBox)
+        self.web_site_combo = QComboBox()
+        self.web_site_combo.addItem('Chrome')
+        self.web_site_combo.addItem('Firefox')
+        self.browser_layout.addWidget(self.web_site_combo)
 
         self.button_layout = QHBoxLayout()
         self.start_bot_button = QPushButton('Run')
+        self.start_bot_button.setEnabled(False)
         self.button_layout.addWidget(self.start_bot_button)
         self.stop_bot_button = QPushButton('Stop')
         self.button_layout.addWidget(self.stop_bot_button)
@@ -65,22 +64,23 @@ class Ui_MainWindow(object):
         self.money_layout.addWidget(self.earned_money_label)
         self.money_layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
 
-        self.site_layout = QHBoxLayout()
+        """self.site_layout = QHBoxLayout()
         self.site_label = QLabel('Site:')
         self.site_layout.addWidget(self.site_label)
         self.web_site_combo = QComboBox()
         self.web_site_combo.addItem('Aviso')
         self.web_site_combo.addItem('Proficentr')
-        self.site_layout.addWidget(self.web_site_combo)
+        self.site_layout.addWidget(self.web_site_combo)"""
 
         self.log_box = QTextEdit()
         self.log_box.setReadOnly(True)
         
         self.layout = QVBoxLayout()
-        self.layout.addLayout(self.credentials_layout)
+        #self.layout.addWidget(self.toolbar)
+        self.layout.addLayout(self.users_layout)
         self.layout.addLayout(self.trial_layout)
         self.layout.addLayout(self.browser_layout)
-        self.layout.addLayout(self.site_layout)
+        #self.layout.addLayout(self.site_layout)
         self.layout.addWidget(self.log_box)
         self.layout.addLayout(self.button_layout)
         self.layout.addLayout(self.money_layout)
