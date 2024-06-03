@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
+from userdata import *
 
 load_dotenv()
 just_fix_windows_console()
@@ -222,14 +223,20 @@ class Profitcentr:
             sleep(random.randint(1, 7))
 
         return is_tasks_available
+    
+    def dump_cookies(self, driver):
+        self.file_path = path_to_cookies(self)
+        pdump(driver.get_cookies(),
+            open(self.file_path, "wb"))
 
     def log_in(self, driver, login, password):
         self.append_log(f'<font color="">{self.logtime()} Start log in</font>')
         driver.get(f'{self.profitcentr_url}login')
 
-        if exists(f"profitcentr_{login}_cookies"):
+        self.file_path = path_to_cookies(self)
+        if exists(self.file_path):
             self.append_log(f'<font color="">{self.logtime()} Cookies found</font>')
-            for cookie in pload(open(f"profitcentr_{login}_cookies", "rb")):
+            for cookie in pload(open(self.file_path, "rb")):
                 driver.add_cookie(cookie)
             driver.get(self.profitcentr_url)
             if 'Основной счет' in driver.page_source:
@@ -248,5 +255,5 @@ class Profitcentr:
             sleep(1)
 
         time.sleep(10)
-        pdump(driver.get_cookies(), open(f"profitcentr_{login}_cookies", "wb"))
+        self.dump_cookies(driver)
         self.append_log(f'<font color="">{self.logtime()} Finished log in</font>')

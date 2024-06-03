@@ -8,6 +8,8 @@ from dotenv import load_dotenv
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
+import os
+from userdata import *
 
 load_dotenv()
 just_fix_windows_console()
@@ -185,14 +187,19 @@ class Aviso:
             is_tasks_available = False
 
         return is_tasks_available
+    
+    def dump_cookies(self):
+        self.file_path = path_to_cookies(self)
+        pdump(self.driver.get_cookies(),
+            open(self.file_path, "wb"))
 
     def log_in(self, driver,  login, password):
-        self.append_log(f'<font color="">{self.logtime()} Start log in</font>')
+        self.file_path = path_to_cookies(self)
         driver.get(self.aviso_url)
 
-        if exists(f"aviso_{login}_cookies"):
+        if exists(self.file_path):
             self.append_log(f'<font color="">{self.logtime()} Cookies found</font>')
-            for cookie in pload(open(f"aviso_{login}_cookies", "rb")):
+            for cookie in pload(open(self.file_path, "rb")):
                 driver.add_cookie(cookie)
             driver.get(self.aviso_url)
             if 'Статус' in driver.page_source:
@@ -213,5 +220,5 @@ class Aviso:
                 self.append_log(f'<font color="orange">{self.logtime()} Waiting for log in</font>')
             sleep(1)
 
-        pdump(driver.get_cookies(), open(f"aviso_{login}_cookies", "wb"))
+        self.dump_cookies()
         self.append_log(f'<font color="">{self.logtime()} Finished log in</font>')

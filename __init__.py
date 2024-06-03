@@ -1,1 +1,1 @@
-from .windows import main_window, settings
+from .windows import main_window, settings_window

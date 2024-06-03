@@ -6,6 +6,8 @@ from browser import Firefox, Chrome
 from profitcentr import Profitcentr
 from datetime import datetime
 import time
+import os
+from userdata import *
 
 
 class Bot:
@@ -29,12 +31,12 @@ class Bot:
     def append_log(self, text):
         self.ui.log_box.append(text)
 
-    def run_bot(self, login, password, browser):
+    def run_bot(self, login, password, browser, site):
         self.login = login
         if self.ui.web_site_combo.currentIndex() == -1:
             self.append_log(f'<font color="orange">{self.logtime()} Choice web site</font>')
             return
-        self.current_bot = self.bot_dict[self.ui.web_site_combo.currentText()]
+        self.current_bot = self.bot_dict[site]
         while self.is_running:
             self.append_log(f'<font color="green">{self.logtime()} Using {browser}</font>')
             if browser == 'Firefox':
@@ -88,12 +90,16 @@ class Bot:
 
     def get_balance(self):
         return self.aviso.get_balance() + self.profitcentr.get_balance()
+    
+    def dump_cookies(self):
+    # Determine the user's home directory
+        self.file_path = path_to_cookies(self)
+        print(self.file_path)
+        pdump(self.driver.get_cookies(),
+            open(self.file_path, "wb"))
 
     def stop(self):
-        if self.login:
-            pdump(self.driver.get_cookies(),
-                  open(f"{self.ui.web_site_combo.currentText().lower()}_{self.login}_cookies", "wb"))
-            self.login = None
+        self.dump_cookies()
         self.is_running = False
         self.driver.quit()
 
