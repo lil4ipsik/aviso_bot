@@ -9,6 +9,7 @@ from PyQt6.QtWidgets import QMainWindow
 from PyQt6.QtWidgets import QMessageBox
 from dotenv import load_dotenv
 
+from business import KeyValidationThread
 from bot import Bot
 from business import is_key_valid, logtime
 from ui.main_ui import Ui_MainWindow as MainUI
@@ -48,13 +49,18 @@ class MainWindow(QMainWindow):
             self.setWindowTitle(f'aviso.bz bot ({self.version} - Not activated)')
 
         if len(self.ui.product_key_edit.text()) == 29:
-            self.key_data = is_key_valid(self.ui.login_edit.text(), self.ui.product_key_edit.text())
-            if self.key_data[0]:
-                self.ui.vaild_label.setText(f'Valid to {self.key_data[1]}')
-                self.setWindowTitle(f'aviso.bz bot ({self.version} - Premium)')
-            else:
-                self.ui.vaild_label.setText('Invalid (idi nahui)')
-                self.setWindowTitle(f'aviso.bz bot ({self.version} - Not activated)')
+            self.validator_thread = KeyValidationThread(self.ui.login_edit.text(), self.ui.product_key_edit.text())
+            self.validator_thread.key_validation_signal.connect(self.key_validation_signal)
+            self.validator_thread.start()
+
+    def key_validation_signal(self, is_valid, valid_to):
+        if is_valid:
+            self.ui.vaild_label.setText(f'Valid to {valid_to}')
+            self.setWindowTitle(f'aviso.bz bot ({self.version} - Premium)')
+        else:
+            self.ui.vaild_label.setText('Invalid (idi nahui)')
+            self.setWindowTitle(f'aviso.bz bot ({self.version} - Not activated)')
+        self.key_data = is_valid, valid_to
 
     def start_bot_button_clicked(self):
 
@@ -130,9 +136,9 @@ class MainWindow(QMainWindow):
                                      QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
                                      QMessageBox.StandardButton.No)
         if reply == QMessageBox.StandardButton.Yes:
-            event.accept()
             if self.bot.driver is not None:
                 self.ui.log_box.append(f'{logtime()} Closing selenium processes...')
                 self.bot.driver.quit()
+            event.accept()
         else:
             event.ignore()
