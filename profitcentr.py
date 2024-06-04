@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
+from userdata import *
 
 from business import logtime
 from web_bot import WebBot
@@ -222,17 +223,22 @@ class Profitcentr(WebBot):
             sleep(random.randint(1, 7))
 
         return is_tasks_available
+    
+    def dump_cookies(self, driver):
+        self.file_path = path_to_cookies(self)
+        pdump(driver.get_cookies(),
+            open(self.file_path, "wb"))
 
     def log_in(self):
         self.append_log(f'<font color="">{logtime()} Start log in</font>')
         self.wait_while_paused()
         self.driver.get(f'{PROFITCENTR_URL}login')
 
-        if exists(f"profitcentr_{self.login}_cookies"):
+        self.file_path = path_to_cookies(self)
+        if exists(self.file_path):
             self.append_log(f'<font color="">{logtime()} Cookies found</font>')
-            for cookie in pload(open(f"profitcentr_{self.login}_cookies", "rb")):
-                self.driver.add_cookie(cookie)
-            self.wait_while_paused()
+            for cookie in pload(open(self.file_path, "rb")):
+                self.wait_while_paused()
             self.driver.get(PROFITCENTR_URL)
             if 'Основной счет' in self.driver.page_source:
                 return
@@ -253,5 +259,5 @@ class Profitcentr(WebBot):
             time.sleep(1)
 
         time.sleep(10)
-        pdump(self.driver.get_cookies(), open(f"profitcentr_{self.login}_cookies", "wb"))
+        self.dump_cookies(self.driver)
         self.append_log(f'<font color="">{logtime()} Finished log in</font>')

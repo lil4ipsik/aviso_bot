@@ -7,33 +7,36 @@ from browser import Firefox, Chrome
 from business import logtime
 from profitcentr import Profitcentr
 import time
+import os
+from userdata import *
 
 
 class Bot(QThread):
-    def __init__(self, ui, login, password):
+    def __init__(self, ui, login, password, site):
         super().__init__()
         self.driver = None
         self.is_running = True
         self.ui = ui
         self.login = login
         self.password = password
+        self.site = site
         self.current_bot = None
 
     def append_log(self, text):
         self.ui.log_box.append(text)
 
     def run(self):
-        if self.ui.web_site_combo.currentIndex() == -1:
-            self.append_log(f'<font color="orange">{logtime()} Choice web site</font>')
+        if self.ui.web_browser_combo.currentIndex() == -1:
+            self.append_log(f'<font color="orange">{logtime()} Choose web site</font>')
             return
-        self.append_log(f'<font color="green">{logtime()} Using {self.ui.comboBox.currentText()}</font>')
+        self.append_log(f'<font color="green">{logtime()} Using {self.ui.web_browser_combo.currentText()}</font>')
         try:
-            if self.ui.comboBox.currentText() == 'Firefox':
+            if self.ui.web_browser_combo.currentText() == 'Firefox':
                 self.driver = Firefox().open_browser()
-            elif self.ui.comboBox.currentText() == 'Chrome':
+            elif self.ui.web_browser_combo.currentText() == 'Chrome':
                 self.driver = Chrome().open_browser()
 
-            if self.ui.web_site_combo.currentText() == 'Aviso':
+            if self.site == 'Aviso':
                 self.current_bot = Aviso(self.ui, self.ui.log_box, self.driver, self.login,
                                          self.password)
             else:
@@ -89,11 +92,16 @@ class Bot(QThread):
 
     def get_balance(self):
         return self.current_bot.get_balance() if self.current_bot else 0
+    
+    def dump_cookies(self):
+    # Determine the user's home directory
+        self.file_path = path_to_cookies(self)
+        print(self.file_path)
+        pdump(self.driver.get_cookies(),
+            open(self.file_path, "wb"))
 
     def stop(self):
-        if self.login:
-            pdump(self.driver.get_cookies(),
-                  open(f"{self.ui.web_site_combo.currentText().lower()}_{self.login}_cookies", "wb"))
+        self.dump_cookies()
         self.is_running = False
         self.driver.quit()
         self.terminate()
