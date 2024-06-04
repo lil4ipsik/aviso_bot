@@ -76,23 +76,25 @@ class MainWindow(QMainWindow):
         self.key_data = is_valid, valid_to
 
     def start_bot_button_clicked(self):
-        data = get_user_data()
-        id = self.ui.userlist_combo.currentIndex() + 1
-        self.login = data.get(str(id), {}).get('username')
-        self.password = data.get(str(id), {}).get('password')
-        self.current_site = data.get(str(id), {}).get('site')
-        
-        self.bot = Bot(self.ui,
-                       self.login,
-                       self.password,
-                       self.current_site
-                       )
+        if self.bot_state == 'stop':
+            data = get_user_data()
+            id = self.ui.userlist_combo.currentIndex() + 1
+            self.login = data.get(str(id), {}).get('username')
+            self.password = data.get(str(id), {}).get('password')
+            self.current_site = data.get(str(id), {}).get('site')
+            
+            self.bot = Bot(self.ui,
+                        self.login,
+                        self.password,
+                        self.current_site
+                        )
 
         if self.bot_state == 'stop':
             self.bot_state = 'running'
             self.timer.start(1000)
             self.ui.start_bot_button.setText('Pause')
             self.ui.userlist_combo.setDisabled(True)
+            self.ui.refresh_button.setDisabled(True)
             self.ui.web_browser_combo.setDisabled(True)
             self.ui.stop_bot_button.setEnabled(True)
             self.ui.status_label.setText('Status: Running')
@@ -120,6 +122,7 @@ class MainWindow(QMainWindow):
         self.bot.wait()
         self.ui.start_bot_button.setText('Run')
         self.ui.start_bot_button.setDisabled(False)
+        self.ui.refresh_button.setDisabled(False)
         self.ui.stop_bot_button.setDisabled(True)
         self.ui.userlist_combo.setDisabled(False)
         self.ui.web_browser_combo.setDisabled(False)

@@ -19,6 +19,7 @@ class Ui_MainWindow(object):
         self.userlist_label = QLabel('User:')
         self.credentials_layout.addWidget(self.userlist_label)
         self.userlist_combo = QComboBox()
+        self.userlist_combo.setFixedWidth(210)
         self.credentials_layout.addWidget(self.userlist_combo)
         self.refresh_button = QPushButton('↻')
         self.refresh_button.setFixedWidth(30)
@@ -64,14 +65,6 @@ class Ui_MainWindow(object):
         self.money_layout.addWidget(self.earned_money_label)
         self.money_layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
 
-        """self.site_layout = QHBoxLayout()
-        self.site_label = QLabel('Site:')
-        self.site_layout.addWidget(self.site_label)
-        self.web_site_combo = QComboBox()
-        self.web_site_combo.addItem('Aviso')
-        self.web_site_combo.addItem('Proficentr')
-        self.site_layout.addWidget(self.web_site_combo)"""
-
         self.log_box = QTextEdit()
         self.log_box.setReadOnly(True)
         
@@ -80,7 +73,6 @@ class Ui_MainWindow(object):
         self.layout.addLayout(self.users_layout)
         self.layout.addLayout(self.trial_layout)
         self.layout.addLayout(self.browser_layout)
-        #self.layout.addLayout(self.site_layout)
         self.layout.addWidget(self.log_box)
         self.layout.addLayout(self.button_layout)
         self.layout.addLayout(self.money_layout)
