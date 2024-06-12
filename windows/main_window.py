@@ -23,7 +23,7 @@ class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.selected_browser = None
-        icon_path = join(dirname(__file__), 'icon.ico')
+        icon_path = join(dirname(__file__), 'img/icon.ico')
         self.setWindowIcon(QIcon(icon_path))
         self.setFixedSize(410, 300)
         self.version = app_version()
@@ -31,7 +31,6 @@ class MainWindow(QMainWindow):
         self.ui = MainUI()
         self.key_data = (False, None)
         self.ui.setupUi(self)
-        #self.on_setup_ui()
         self.ui.toolbar.addAction('Settings', self.open_settings_window)
         self.ui.refresh_button.clicked.connect(self.load_user_data)
         self.bot_state = 'stop'
@@ -45,8 +44,6 @@ class MainWindow(QMainWindow):
         bar.rangeChanged.connect(lambda: bar.setValue(bar.maximum()))
         self.load_user_data()
         self.ui.userlist_combo.currentIndexChanged.connect(self.check_key)
-       #self.ui.product_key_edit.textChanged.connect(self.check_key)
-       #self.ui.login_edit.textChanged.connect(self.check_key)
 
     def check_key(self):
         id = self.ui.userlist_combo.currentIndex() + 1
@@ -135,14 +132,6 @@ class MainWindow(QMainWindow):
             self.ui.start_bot_button.setDisabled(False)
             self.ui.stop_bot_button.setDisabled(False)
 
-    def on_setup_ui(self):
-        if exists('.env'):
-            load_dotenv('.env')
-            self.ui.login_edit.setText(getenv('login'))
-            self.ui.product_key_edit.setText(getenv('key'))
-            self.ui.password_edit.setText(getenv('password'))
-            self.check_key()
-
     def closeEvent(self, event):
         reply = QMessageBox.question(self, 'Exit', 'Are you sure you want to exit?',
                                      QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
@@ -160,7 +149,6 @@ class MainWindow(QMainWindow):
         user_data = get_user_data()
         for user_id, user_info in user_data.items():
             self.ui.userlist_combo.addItem(f'{user_id}. {user_info['username']} ({user_info['site']})')
-
 
     def open_settings_window(self):
         from windows.settings_window import SettingsWindow
