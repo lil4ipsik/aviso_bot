@@ -1,12 +1,15 @@
 import sys
-from PyQt6.QtWidgets import QApplication, QLabel, QVBoxLayout, QWidget, QPushButton, QHBoxLayout, QLineEdit, QComboBox, QMainWindow, QTabWidget , QTreeWidget, QTreeWidgetItem
-from PyQt6.QtGui import QIcon
+from PyQt6.QtWidgets import QApplication, QLabel, QVBoxLayout, QWidget, QPushButton, QHBoxLayout, QLineEdit, QComboBox, QDialog, QMainWindow , QTreeWidget, QTreeWidgetItem
+from PyQt6.QtGui import QIcon, QPixmap
 import json
 from userdata import *
 from os import path as p
 from ui.settings_ui import UI_Settings as SettingsUI
 
-app_icon_path = p.dirname(p.abspath(__file__)) + '/icon.ico'
+app_icon_path = p.dirname(p.abspath(__file__)) + '/img/icon.ico'
+png_icon_path = p.dirname(p.abspath(__file__)) + '/img/icon.png'
+
+
 
 class SettingsWindow(QMainWindow):
     def __init__(self):
@@ -15,7 +18,7 @@ class SettingsWindow(QMainWindow):
         self.setFixedSize(600, 400)
         self.setWindowIcon(QIcon(app_icon_path))
         self.ui = SettingsUI()
-        self.ui.setup_ui(self)
+        self.ui.setup_ui(self, png_icon_path, self.colorscheme()[0], self.colorscheme()[1])
         self.userdata = create_user_data_file()
         self.load_user_data()
 
@@ -26,6 +29,10 @@ class SettingsWindow(QMainWindow):
         self.ui.tree_widget.itemClicked.connect(lambda item: [self.ui.edit_button.setEnabled(True), self.ui.remove_button.setEnabled(True)])
         self.ui.tree_widget.itemDoubleClicked.connect(lambda item: [self.edit_user(item.text(0), item.text(1), item.text(2), item.text(3), item.text(4))]) 
         self.ui.tree_widget.itemSelectionChanged.connect(lambda: [self.ui.edit_button.setEnabled(False), self.ui.remove_button.setEnabled(False)])
+
+        self.ui.api_edit.setText(get_api_key())
+        self.ui.api_edit.textChanged.connect(lambda: self.ui.api_save_button.setEnabled(bool(len(self.ui.api_edit.text()) == 32 and self.ui.api_edit.text() != get_api_key())))
+        self.ui.api_save_button.clicked.connect(self.api_key)
 
     def load_user_data(self):
         user_data = get_user_data()
@@ -39,10 +46,9 @@ class SettingsWindow(QMainWindow):
             self.ui.tree_widget.clear()
 
     def add_user(self):
-        add_user_window = QWidget()
+        add_user_window = QDialog(self)
         add_user_window.setWindowTitle("Add user")
         add_user_window.setFixedSize(400, 200)
-        add_user_window.setWindowIcon(QIcon(app_icon_path))
 
         username_layout = QHBoxLayout()
         username_label = QLabel("Username:")
@@ -58,6 +64,7 @@ class SettingsWindow(QMainWindow):
         key_label = QLabel("Key:")
         key_edit = QLineEdit()
         key_edit.setPlaceholderText("XXXXX-XXXXX-XXXXX-XXXXX-XXXXX")
+        key_edit.setInputMask("XXXXX-XXXXX-XXXXX-XXXXX-XXXXX;X")
         key_edit.setMaxLength(29)
         key_layout.addWidget(key_label)
         key_layout.addWidget(key_edit)
@@ -104,10 +111,9 @@ class SettingsWindow(QMainWindow):
             self.load_user_data()
 
     def edit_user(self, id, username, password, key, site):
-        edit_user_window = QWidget()
+        edit_user_window = QDialog(self)
         edit_user_window.setWindowTitle("Edit user")
         edit_user_window.setFixedSize(400, 200)
-        edit_user_window.setWindowIcon(QIcon(app_icon_path))
 
         username_layout = QHBoxLayout()
         username_label = QLabel("Username:")
@@ -125,6 +131,7 @@ class SettingsWindow(QMainWindow):
         key_label = QLabel("Key:")
         key_edit = QLineEdit()
         key_edit.setPlaceholderText("XXXXX-XXXXX-XXXXX-XXXXX-XXXXX")
+        key_edit.setInputMask("XXXXX-XXXXX-XXXXX-XXXXX-XXXXX;X")
         key_edit.setMaxLength(29)
         key_edit.setText(key)
         key_layout.addWidget(key_label)
@@ -160,3 +167,23 @@ class SettingsWindow(QMainWindow):
 
         edit_user_window.setLayout(layout)
         edit_user_window.show()
+
+    def api_key(self):
+        api_key = self.ui.api_edit.text()
+        save_api_key(api_key)
+
+    def colorscheme(self):
+        window_color = self.palette().window().color()
+
+        dark_github_icon = QPixmap(p.dirname(p.abspath(__file__)) + '/img/icons/githublogo_dark.png')
+        dark_website_icon = QPixmap(p.dirname(p.abspath(__file__)) + '/img/icons/website_dark.png')
+        light_github_icon = QPixmap(p.dirname(p.abspath(__file__)) + '/img/icons/githublogo.png')
+        light_website_icon = QPixmap(p.dirname(p.abspath(__file__)) + '/img/icons/website.png')
+
+        cs = (0.299 * window_color.redF() +
+            0.587 * window_color.greenF() +
+            0.114 * window_color.blueF())
+        if cs < 0.5:
+            return dark_github_icon, dark_website_icon
+        else:
+            return light_github_icon, light_website_icon

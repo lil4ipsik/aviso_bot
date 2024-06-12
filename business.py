@@ -1,3 +1,4 @@
+from datetime import datetime
 import requests
 from PyQt6.QtCore import QThread, pyqtSignal
 
@@ -33,3 +34,7 @@ def is_key_valid(username, key):
         is_valid = False
         valid_to = None
     return is_valid, valid_to
+
+
+def logtime():
+    return f'[{datetime.now().replace(microsecond=0)}]'
