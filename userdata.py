@@ -129,3 +129,40 @@ def path_to_cookies(self):
     file_path = os.path.join(folder_path, f'{site}_{login}_cookies')
 
     return file_path
+
+def path_to_api_key():
+    api_key_path = os.path.join(path_to_data(), 'api_key.json')
+
+    return api_key_path
+
+def save_api_key(api_key):
+    api_key_path = path_to_api_key()
+
+    # Load existing user data from the JSON file
+    try:
+        with open(api_key_path, 'r') as file:
+            api_data = json.load(file)
+    except FileNotFoundError:
+        api_data = {}
+
+    # Add or update the API key
+    api_data['api_key'] = api_key
+
+    # Save the updated user data to a separate JSON file
+    with open(api_key_path, 'w') as file:
+        json.dump(api_data, file)
+
+def get_api_key():
+    api_key_path = path_to_api_key()
+    
+    # Load existing user data from the separate JSON file
+    try:
+        with open(api_key_path, 'r') as file:
+            user_data = json.load(file)
+    except FileNotFoundError:
+        user_data = {}
+
+    # Get the API key
+    api_key = user_data.get('api_key', '')
+
+    return api_key
