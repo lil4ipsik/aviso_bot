@@ -59,36 +59,22 @@ class Bot(QThread):
     def earn_on_bot(self):
         is_video_tasks_available = True
         is_website_tasks_available = True
-        while self.is_running and self.driver:
+        while self.is_running and self.driver and (is_website_tasks_available or is_video_tasks_available):
             try:
-                if is_website_tasks_available or is_video_tasks_available:
-                    is_video_tasks_available = self.current_bot.watch_videos(self.driver)
-                    for i in range(random.randint(15, 90))[::-1]:
-                        if self.is_running:
-                            self.append_log(f'<font color="orange">Waiting for {i}seconds</font>')
-                            time.sleep(1)
-                        else:
-                            break
-                    is_website_tasks_available = self.current_bot.view_websites(self.driver)
-                    for i in range(random.randint(500, 1500))[::-1]:
-                        if self.is_running:
-                            self.append_log(f'<font color="orange">Waiting for {i}seconds</font>')
-                            time.sleep(1)
-                        else:
-                            break
-                    continue
-            except Exception as e:
-                self.append_log(f'<font color="red">{logtime()} {e}</font>')
-                for i in range(random.randint(60, 300))[::-1]:
+                is_video_tasks_available = self.current_bot.watch_videos(self.driver)
+                is_website_tasks_available = self.current_bot.view_websites(self.driver)
+                for i in range(random.randint(0, 300))[::-1]:
                     if self.is_running:
                         self.append_log(f'<font color="orange">Waiting for {i}seconds</font>')
                         time.sleep(1)
                     else:
                         break
                 continue
+            except Exception as e:
+                self.append_log(f'<font color="red">{logtime()} {e}</font>')
+                continue
 
-            self.append_log(f'<font color="red">{logtime()} Task isn`t available</font>')
-            return
+        self.append_log(f'<font color="green">{logtime()} Finish complete tasks</font>')
 
     def get_balance(self):
         return self.current_bot.get_balance() if self.current_bot else 0

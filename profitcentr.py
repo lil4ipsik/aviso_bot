@@ -10,6 +10,8 @@ from dotenv import load_dotenv
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
+from twocaptcha import TwoCaptcha
+
 from userdata import *
 
 from business import logtime
@@ -124,7 +126,7 @@ class Profitcentr(WebBot):
     def watch_videos(self, driver):
         self.append_log(f'<font color="">{logtime()} Watch youtube</font>')
         min_video_count = 75
-        max_video_count = 100
+        max_video_count = 150
         current_video_count = random.randint(min_video_count, max_video_count)
         wait = WebDriverWait(driver, 7)
         self.wait_while_paused()
@@ -134,10 +136,7 @@ class Profitcentr(WebBot):
         driver.find_element(By.ID, 'mnu_tblock1').find_elements(By.TAG_NAME, 'a')[5].click()
         time.sleep(3)
         self.wait_while_paused()
-        while _is_captcha_available(driver):
-            self.append_log(f'<font color="red">{logtime()} COMPLETE CAPTCHA</font>')
-            time.sleep(1)
-        time.sleep(5)
+        self._solve_captcha('btn')
         error_count = 0
         video_list = driver.find_elements(By.CLASS_NAME, "work-serf")
         is_tasks_available = True if video_list else False
@@ -151,21 +150,20 @@ class Profitcentr(WebBot):
                         time.sleep(1)
                         # driver.find_element(By.ID, 'load-pages').click()
                         for task in driver.find_elements(By.CLASS_NAME, "work-serf"):
-                            if not ('Готово, Вам на счет зачислено' in task.text):
+                            if 'Просмотр видеоролика' in task.text:
                                 video_list.append(task)
                         if len(video_list) != 0:
                             break
                     except Exception as e:
                         self.append_log(f'<font color="red">{logtime()} {e}</font>\nRefresh is normal')
                         driver.refresh()
+                        time.sleep(3)
                         
             if len(video_list) == 0:
                 is_tasks_available = False
                 break
             self.wait_while_paused()
-            while _is_captcha_available(driver):
-                self.append_log(f'<font color="red">{logtime()} COMPLETE CAPTCHA</font>')
-                time.sleep(1)
+            self._solve_captcha('btn')
             if error_count >= 15:
                 is_tasks_available = False
                 break
@@ -201,7 +199,8 @@ class Profitcentr(WebBot):
                 sleep(time_sleep)
                 driver.switch_to.window(driver.window_handles[1])
                 self.wait_while_paused()
-                driver.find_element(By.CLASS_NAME, 'butt-nw').click()
+                wait.until(ec.presence_of_element_located((By.CLASS_NAME, 'butt-nw'))).click()
+                # driver.find_element(By.CLASS_NAME, 'butt-nw').click()
                 time.sleep(3)
                 earned_money = float(wait.until(ec.presence_of_element_located((By.XPATH, '/html/body/table/tbody/tr[1]'
                                                                                           '/td/table/tbody/tr[2]/td/'
@@ -220,7 +219,7 @@ class Profitcentr(WebBot):
                 driver.close()
 
             driver.switch_to.window(driver.window_handles[0])
-            sleep(random.randint(1, 7))
+            sleep(random.randint(1, 3))
 
         return is_tasks_available
     
@@ -251,13 +250,54 @@ class Profitcentr(WebBot):
         time.sleep(1)
         self.driver.find_elements(By.CLASS_NAME, "login_vh")[1].send_keys(self.password)
         self.wait_while_paused()
+        self._solve_captcha('btn_big_green')
         while f'{PROFITCENTR_URL}login' in self.driver.current_url:
-            if self.driver.find_elements(By.CLASS_NAME, 'out-capcha'):
-                self.append_log(f'<font color="red">{logtime()} COMPLETE THE CAPTCHA</font>')
-            else:
-                self.append_log(f'<font color="orange">{logtime()} Waiting for log in</font>')
+            self.append_log(f'<font color="orange">{logtime()} Waiting for log in</font>')
             time.sleep(1)
-
         time.sleep(10)
         self.dump_cookies(self.driver)
         self.append_log(f'<font color="">{logtime()} Finished log in</font>')
+
+    def _solve_captcha(self, button_class):
+        while True:
+            config = {
+                'server': '2captcha.com',
+                'apiKey': '',  # TODO: past user API key
+                'softId': 123321111,
+                'defaultTimeout': 120,
+                'recaptchaTimeout': 600,
+            }
+            solver = TwoCaptcha(**config)
+            try:
+                self.driver.find_element(By.CLASS_NAME, 'out-reload').click()
+                time.sleep(1)
+                self.driver.find_element(By.CLASS_NAME, 'out-capcha').screenshot('screen.png')
+            except Exception as e:
+                print(e)
+                return
+            print(self.driver.find_element(By.CLASS_NAME, 'out-capcha-title').text)
+            try:
+                result = solver.grid(file='screen.png', hintText=self.driver.find_element(
+                    By.CLASS_NAME, 'out-capcha-title').text, cols=6, rows=1, lang='ru')
+                print(result)
+            except Exception as e:
+                print(e)
+                self.driver.find_element(By.CLASS_NAME, 'out-reload').click()
+                time.sleep(1)
+                continue
+            for index in result['code'].split(':')[1].split('/'):
+                print(index)
+                time.sleep(random.randint(1, 15) / 10)
+                self.driver.find_elements(By.CLASS_NAME, 'out-capcha-lab')[int(index) - 1].click()
+            print('sleep after for')
+            time.sleep(1)
+            self.driver.find_element(By.CLASS_NAME, button_class).click()
+            print('good click to button')
+            time.sleep(10)
+            if _is_captcha_available(self.driver):
+                solver.report(result['captchaId'], False)
+            else:
+                break
+
+
+
