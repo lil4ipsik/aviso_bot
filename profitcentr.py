@@ -262,7 +262,7 @@ class Profitcentr(WebBot):
         while True:
             config = {
                 'server': '2captcha.com',
-                'apiKey': '',  # TODO: past user API key
+                'apiKey': get_api_key(),
                 'softId': 123321111,
                 'defaultTimeout': 120,
                 'recaptchaTimeout': 600,
