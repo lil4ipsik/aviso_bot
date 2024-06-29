@@ -42,28 +42,22 @@ class Profitcentr(WebBot):
         self.append_log(f'<font color="">{logtime()} Surf web</font>')
         min_video_count = 50
         max_video_count = 100
-        wait = WebDriverWait(driver, 7)
+        successful_video_watching_count = 0
+        wait = WebDriverWait(driver, 5)
         self.wait_while_paused()
         if wait.until(ec.presence_of_element_located((By.ID, 'mnu_tblock1'))).value_of_css_property("display") == "none":
             self.wait_while_paused()
-            driver.find_element(By.ID, 'mnu_title1').click()
-            time.sleep(3)
+            wait.until(ec.presence_of_element_located((By.ID, 'mnu_title1'))).click()
         self.wait_while_paused()
-        driver.find_element(By.ID, 'mnu_tblock1').find_elements(By.TAG_NAME, 'a')[1].click()
+        wait.until(ec.presence_of_element_located((By.ID, 'mnu_tblock1'))).find_elements(By.TAG_NAME, 'a')[1].click()
         time.sleep(3)
         self.wait_while_paused()
         while _is_captcha_available(driver):
             self.append_log(f'<font color="red">{logtime()} COMPLETE CAPTCHA</font>')
             time.sleep(1)
-
-        # if 'Посещение сайтов' in driver.page_source:
-        #     print(f"'Посещение сайтов' in driver.page_source{'Посещение сайтов' in driver.page_source}")
-        #     self.log_in(driver, self.ui.login_edit.text(), self.ui.password_edit.text())
-        #     return True
         error_count = 0
         website_list = driver.find_elements(By.CLASS_NAME, "work-serf")
         print(website_list)
-        is_tasks_available = True
         if len(website_list) > 0 and not ('Нет переходов доступных для просмотра, зайдите немного позже' in
                                           driver.page_source):
             for i in website_list[:random.randint(min_video_count, max_video_count)]:
@@ -71,8 +65,8 @@ class Profitcentr(WebBot):
                 while _is_captcha_available(driver):
                     self.append_log(f'<font color="red">{logtime()} COMPLETE CAPTCHA</font>')
                     time.sleep(1)
-                if error_count >= 3:
-                    return False
+                if error_count >= 15:
+                    break
                 try:
                     a = i.find_element(By.TAG_NAME, "a")
                     price_span = i.find_element(By.XPATH, 'tbody/tr/td[3]/span[2]')
@@ -92,7 +86,7 @@ class Profitcentr(WebBot):
                 for j in range(5):
                     self.wait_while_paused()
                     if len(driver.window_handles) < 2:
-                        sleep(1)
+                        sleep(0.25)
                         continue
                     else:
                         break
@@ -102,13 +96,13 @@ class Profitcentr(WebBot):
 
                 try:
                     driver.switch_to.window(driver.window_handles[1])
-                    sleep(time_sleep)
+                    sleep(time_sleep + 3)
                 except Exception as e:
                     self.append_log(f'<font color="red">{logtime()} {e}</font>')
                     error_count += 1
-                    sleep(3)
+                    sleep(0.25)
                 else:
-                    sleep(0.5)
+                    successful_video_watching_count += 1
                     self.total_earned_money += earned_money
                     self.append_log(f'<font color="green">{logtime()} Earned: '
                                     f'{round(earned_money, 5)}, total: {round(self.total_earned_money, 5)}</font>')
@@ -118,28 +112,26 @@ class Profitcentr(WebBot):
 
                 driver.switch_to.window(driver.window_handles[0])
                 sleep(1)
-        else:
-            is_tasks_available = False
 
-        return is_tasks_available
+        return True if successful_video_watching_count > 0 else False
 
     def watch_videos(self, driver):
         self.append_log(f'<font color="">{logtime()} Watch youtube</font>')
         min_video_count = 75
         max_video_count = 150
+        successful_video_watching_count = 0
         current_video_count = random.randint(min_video_count, max_video_count)
-        wait = WebDriverWait(driver, 7)
+        wait = WebDriverWait(driver, 5)
         self.wait_while_paused()
         if wait.until(ec.presence_of_element_located((By.ID, 'mnu_tblock1'))).value_of_css_property("display") == "none":
-            driver.find_element(By.ID, 'mnu_title1').click()
-            time.sleep(3)
-        driver.find_element(By.ID, 'mnu_tblock1').find_elements(By.TAG_NAME, 'a')[5].click()
+            wait.until(ec.presence_of_element_located((By.ID, 'mnu_title1'))).click()
+            time.sleep(0.25)
+        wait.until(ec.presence_of_element_located((By.ID, 'mnu_tblock1'))).find_elements(By.TAG_NAME, 'a')[5].click()
         time.sleep(3)
         self.wait_while_paused()
         self._solve_captcha('btn')
         error_count = 0
         video_list = driver.find_elements(By.CLASS_NAME, "work-serf")
-        is_tasks_available = True if video_list else False
         for _ in range(current_video_count):
             if len(video_list) == 0:
                 for i in range(15):
@@ -160,12 +152,10 @@ class Profitcentr(WebBot):
                         time.sleep(3)
                         
             if len(video_list) == 0:
-                is_tasks_available = False
                 break
             self.wait_while_paused()
             self._solve_captcha('btn')
             if error_count >= 15:
-                is_tasks_available = False
                 break
             try:
                 self.wait_while_paused()
@@ -210,6 +200,7 @@ class Profitcentr(WebBot):
                 error_count += 1
                 sleep(3)
             else:
+                successful_video_watching_count += 1
                 self.total_earned_money += earned_money
                 self.append_log(f'<font color="green">{logtime()} Earned: '
                                 f'{round(earned_money, 5)}, total: {round(self.total_earned_money, 5)}</font>')
@@ -221,7 +212,7 @@ class Profitcentr(WebBot):
             driver.switch_to.window(driver.window_handles[0])
             sleep(random.randint(1, 3))
 
-        return is_tasks_available
+        return True if successful_video_watching_count > 0 else False
     
     def dump_cookies(self, driver):
         self.file_path = path_to_cookies(self)
