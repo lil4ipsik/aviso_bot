@@ -1,3 +1,4 @@
+import time
 from os.path import exists
 from pickle import dump as pdump, load as pload
 from time import sleep
@@ -16,6 +17,7 @@ load_dotenv()
 just_fix_windows_console()
 
 AVISO_URL = "https://aviso.bz/"
+
 
 def _is_captcha_available(driver):
     if len(driver.find_elements(By.ID, 'h-captcha')) != 0 or len(driver.find_elements(By.CLASS_NAME, 'captcha')):
@@ -51,10 +53,10 @@ class Aviso(WebBot):
                     price_span = i.find_element(By.XPATH, 'tbody/tr/td[3]/span[2]')
                     time_span = i.find_element(By.XPATH, "tbody/tr/td[3]/div/span[1]")
                     earned_money = float(price_span.get_attribute('innerHTML').split('<')[0])
-                    time_sleep = int(time_span.get_attribute('innerHTML').split()[0]) + 5
+                    time_sleep = int(time_span.get_attribute('innerHTML').split()[0]) + 3
                     self.wait_while_paused()
                     a.click()
-                    sleep(1.5)
+                    sleep(0.5)
                     i.find_element(By.CLASS_NAME, 'start-yes-serf').click()
                 except Exception as e:
                     self.append_log(f'<font color="red">{logtime()} {e}</font>')
@@ -64,7 +66,7 @@ class Aviso(WebBot):
                 for j in range(5):
                     self.wait_while_paused()
                     if len(driver.window_handles) < 2:
-                        sleep(1)
+                        time.sleep(0.25)
                         continue
                     else:
                         break
@@ -75,26 +77,26 @@ class Aviso(WebBot):
                 try:
                     self.wait_while_paused()
                     driver.switch_to.window(driver.window_handles[1])
-                    sleep(time_sleep)
+                    time.sleep(time_sleep)
                     driver.switch_to.frame('frminfo')
                     self.wait_while_paused()
                     driver.find_element(By.TAG_NAME, 'a').click()
                 except Exception as e:
                     self.append_log(f'<font color="red">{logtime()} {e}</font>')
                     error_count += 1
-                    sleep(3)
+                    time.sleep(0.5)
                 else:
-                    sleep(0.5)
+                    time.sleep(0.25)
                     self.total_earned_money += earned_money
                     self.total_earned_money += earned_money
                     self.append_log(f'<font color="green">{logtime()} Earned: '
-                                        f'{round(earned_money, 5)}, total: {round(self.total_earned_money, 5)}</font>')
+                                    f'{round(earned_money, 5)}, total: {round(self.total_earned_money, 5)}</font>')
                 for handle in driver.window_handles[1:]:
                     driver.switch_to.window(handle)
                     driver.close()
 
                 driver.switch_to.window(driver.window_handles[0])
-                sleep(1)
+                time.sleep(0.25)
         else:
             is_tasks_available = False
 
@@ -107,7 +109,7 @@ class Aviso(WebBot):
         while _is_captcha_available(driver):
             self.append_log(f'<font color="red">{logtime()} WARNING, COMPLETE THE CAPTCHA</font>')
             sleep(1)
-        wait = WebDriverWait(driver, 7)
+        wait = WebDriverWait(driver, 3)
         error_count = 0
         video_list = []
         if driver.find_elements(By.CLASS_NAME, "form-control"):
@@ -129,7 +131,7 @@ class Aviso(WebBot):
                     time_sleep = int(time_span.get_attribute('innerHTML').split()[0]) + 3
                     self.wait_while_paused()
                     a.click()
-                    sleep(1.5)
+                    sleep(0.25)
                 except Exception as e:
                     self.append_log(f'<font color="red">{logtime()} {e}</font>')
                     error_count += 1
@@ -138,7 +140,7 @@ class Aviso(WebBot):
                 for j in range(5):
                     self.wait_while_paused()
                     if len(driver.window_handles) < 2:
-                        sleep(1)
+                        sleep(0.25)
                         continue
                     else:
                         break
@@ -163,27 +165,27 @@ class Aviso(WebBot):
                 except Exception as e:
                     self.append_log(f'<font color="red">{logtime()} {e}</font>')
                     error_count += 1
-                    sleep(3)
+                    sleep(0.25)
                 else:
                     self.total_earned_money += earned_money
                     self.append_log(f'<font color="green">{logtime()} Earned: '
-                                        f'{round(earned_money, 5)}, total: {round(self.total_earned_money, 5)}</font>')
+                                    f'{round(earned_money, 5)}, total: {round(self.total_earned_money, 5)}</font>')
 
                 for handle in driver.window_handles[1:]:
                     driver.switch_to.window(handle)
                     driver.close()
 
                 driver.switch_to.window(driver.window_handles[0])
-                sleep(1)
+                sleep(0.25)
         else:
             is_tasks_available = False
 
         return is_tasks_available
-    
+
     def dump_cookies(self, driver):
         self.file_path = path_to_cookies(self)
         pdump(driver.get_cookies(),
-            open(self.file_path, "wb"))
+              open(self.file_path, "wb"))
 
     def log_in(self):
         self.file_path = path_to_cookies(self)
@@ -217,6 +219,19 @@ class Aviso(WebBot):
                 self.append_log(f'<font color="orange">{logtime()} Waiting for log in</font>')
             sleep(1)
 
+        self.fa2_auth()
+
         self.wait_while_paused()
         self.dump_cookies(self.driver)
         self.append_log(f'<font color="">{logtime()} Finished log in</font>')
+
+    def fa2_auth(self):
+        form = self.driver.find_elements(By.ID, "two-fa-form")
+        if not form:
+            return
+
+        while self.driver.find_elements(By.ID, "two-fa-form"):
+            self.append_log(f'<font color="red">{logtime()} Enter 2fa code from your mail!</font>')
+            time.sleep(1)
+
+        time.sleep(3)

@@ -43,7 +43,7 @@ class Profitcentr(WebBot):
         min_video_count = 50
         max_video_count = 100
         successful_video_watching_count = 0
-        wait = WebDriverWait(driver, 5)
+        wait = WebDriverWait(driver, 3)
         self.wait_while_paused()
         if wait.until(ec.presence_of_element_located((By.ID, 'mnu_tblock1'))).value_of_css_property("display") == "none":
             self.wait_while_paused()
@@ -57,7 +57,6 @@ class Profitcentr(WebBot):
             time.sleep(1)
         error_count = 0
         website_list = driver.find_elements(By.CLASS_NAME, "work-serf")
-        print(website_list)
         if len(website_list) > 0 and not ('Нет переходов доступных для просмотра, зайдите немного позже' in
                                           driver.page_source):
             for i in website_list[:random.randint(min_video_count, max_video_count)]:
@@ -71,13 +70,10 @@ class Profitcentr(WebBot):
                     a = i.find_element(By.TAG_NAME, "a")
                     price_span = i.find_element(By.XPATH, 'tbody/tr/td[3]/span[2]')
                     time_span = i.find_element(By.XPATH, "tbody/tr/td[2]/div[1]/a")
-                    print(price_span.get_attribute('innerHTML').split(' ')[0],
-                          time_span.get_attribute('onclick').replace("'", '').split(',')[2])
                     earned_money = float(price_span.get_attribute('innerHTML').split(' ')[0])
-                    time_sleep = int(time_span.get_attribute('onclick').replace("'", '').split(',')[2]) + 5
+                    time_sleep = int(time_span.get_attribute('onclick').replace("'", '').split(',')[2]) + 3
                     self.wait_while_paused()
                     a.click()
-                    sleep(1.5)
                 except Exception as e:
                     self.append_log(f'<font color="red">{logtime()} {e}</font>')
                     error_count += 1
@@ -96,7 +92,7 @@ class Profitcentr(WebBot):
 
                 try:
                     driver.switch_to.window(driver.window_handles[1])
-                    sleep(time_sleep + 3)
+                    sleep(time_sleep)
                 except Exception as e:
                     self.append_log(f'<font color="red">{logtime()} {e}</font>')
                     error_count += 1
@@ -111,7 +107,7 @@ class Profitcentr(WebBot):
                     driver.close()
 
                 driver.switch_to.window(driver.window_handles[0])
-                sleep(1)
+                sleep(0.25)
 
         return True if successful_video_watching_count > 0 else False
 
@@ -121,7 +117,7 @@ class Profitcentr(WebBot):
         max_video_count = 150
         successful_video_watching_count = 0
         current_video_count = random.randint(min_video_count, max_video_count)
-        wait = WebDriverWait(driver, 5)
+        wait = WebDriverWait(driver, 3)
         self.wait_while_paused()
         if wait.until(ec.presence_of_element_located((By.ID, 'mnu_tblock1'))).value_of_css_property("display") == "none":
             wait.until(ec.presence_of_element_located((By.ID, 'mnu_title1'))).click()
@@ -134,13 +130,12 @@ class Profitcentr(WebBot):
         video_list = driver.find_elements(By.CLASS_NAME, "work-serf")
         for _ in range(current_video_count):
             if len(video_list) == 0:
-                for i in range(15):
+                for i in range(10):
                     try:
                         self.append_log(f'<font color="yellow">{logtime()} {i + 1} try get more videos of 15</font>')
                         self.wait_while_paused()
                         wait.until(ec.presence_of_element_located((By.ID, 'load-pages'))).click()
-                        time.sleep(1)
-                        # driver.find_element(By.ID, 'load-pages').click()
+                        time.sleep(0.25)
                         for task in driver.find_elements(By.CLASS_NAME, "work-serf"):
                             if 'Просмотр видеоролика' in task.text:
                                 video_list.append(task)
@@ -149,7 +144,7 @@ class Profitcentr(WebBot):
                     except Exception as e:
                         self.append_log(f'<font color="red">{logtime()} {e}</font>\nRefresh is normal')
                         driver.refresh()
-                        time.sleep(3)
+                        time.sleep(1)
                         
             if len(video_list) == 0:
                 break
@@ -160,7 +155,7 @@ class Profitcentr(WebBot):
             try:
                 self.wait_while_paused()
                 video_list[0].find_element(By.TAG_NAME, "span").click()
-                sleep(3)
+                sleep(0.5)
                 self.wait_while_paused()
                 video_list[0].find_element(By.TAG_NAME, "span").click()
                 video_list.pop(0)
@@ -172,7 +167,6 @@ class Profitcentr(WebBot):
 
             for j in range(5):
                 if len(driver.window_handles) < 2:
-                    sleep(1)
                     continue
                 else:
                     break
@@ -182,7 +176,7 @@ class Profitcentr(WebBot):
 
             driver.switch_to.window(driver.window_handles[1])
             try:
-                time_sleep = int(wait.until(ec.presence_of_element_located((By.ID, 'tmr'))).text) + 5
+                time_sleep = int(wait.until(ec.presence_of_element_located((By.ID, 'tmr'))).text) + 1
                 driver.switch_to.frame(wait.until(ec.presence_of_element_located((By.ID, 'video-start'))))
                 self.wait_while_paused()
                 wait.until(ec.presence_of_element_located((By.ID, 'movie_player'))).click()
@@ -191,14 +185,14 @@ class Profitcentr(WebBot):
                 self.wait_while_paused()
                 wait.until(ec.presence_of_element_located((By.CLASS_NAME, 'butt-nw'))).click()
                 # driver.find_element(By.CLASS_NAME, 'butt-nw').click()
-                time.sleep(3)
+                time.sleep(1.5)
                 earned_money = float(wait.until(ec.presence_of_element_located((By.XPATH, '/html/body/table/tbody/tr[1]'
                                                                                           '/td/table/tbody/tr[2]/td/'
                                                                                           'span/b'))).text)
             except Exception as e:
                 self.append_log(f'<font color="red">{logtime()} {e}</font>')
                 error_count += 1
-                sleep(3)
+                sleep(0.25)
             else:
                 successful_video_watching_count += 1
                 self.total_earned_money += earned_money
@@ -210,7 +204,7 @@ class Profitcentr(WebBot):
                 driver.close()
 
             driver.switch_to.window(driver.window_handles[0])
-            sleep(random.randint(1, 3))
+            time.sleep(0.25)
 
         return True if successful_video_watching_count > 0 else False
     
@@ -245,7 +239,7 @@ class Profitcentr(WebBot):
         while f'{PROFITCENTR_URL}login' in self.driver.current_url:
             self.append_log(f'<font color="orange">{logtime()} Waiting for log in</font>')
             time.sleep(1)
-        time.sleep(10)
+        time.sleep(5)
         self.dump_cookies(self.driver)
         self.append_log(f'<font color="">{logtime()} Finished log in</font>')
 
@@ -266,25 +260,20 @@ class Profitcentr(WebBot):
             except Exception as e:
                 print(e)
                 return
-            print(self.driver.find_element(By.CLASS_NAME, 'out-capcha-title').text)
             try:
                 result = solver.grid(file='screen.png', hintText=self.driver.find_element(
                     By.CLASS_NAME, 'out-capcha-title').text, cols=6, rows=1, lang='ru')
-                print(result)
             except Exception as e:
                 print(e)
                 self.driver.find_element(By.CLASS_NAME, 'out-reload').click()
                 time.sleep(1)
                 continue
             for index in result['code'].split(':')[1].split('/'):
-                print(index)
                 time.sleep(random.randint(1, 15) / 10)
                 self.driver.find_elements(By.CLASS_NAME, 'out-capcha-lab')[int(index) - 1].click()
-            print('sleep after for')
             time.sleep(1)
             self.driver.find_element(By.CLASS_NAME, button_class).click()
-            print('good click to button')
-            time.sleep(10)
+            time.sleep(7)
             if _is_captcha_available(self.driver):
                 solver.report(result['captchaId'], False)
             else:
